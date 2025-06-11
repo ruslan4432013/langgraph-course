@@ -65,6 +65,8 @@ atlassian-ide-plugin.xml
 # SonarLint plugin
 .idea/sonarlint/
 .idea
+.langgraph_api
+langgraph-course-env
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
