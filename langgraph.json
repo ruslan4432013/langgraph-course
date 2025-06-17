@@ -4,7 +4,8 @@
     ],
     "graphs": {
         "my_agent": "./main.py:make_graph",
-        "simple_graph": "./lessons/1_simple_graph/simple_graph.py:graph"
+        "simple_graph": "./lessons/1_simple_graph/simple_graph.py:graph",
+        "chain": "./lessons/2_chain/chain.py:graph"
     },
     "env": "./.env"
 }
