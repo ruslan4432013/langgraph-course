@@ -1,5 +1,6 @@
 import json
 from pyexpat.errors import messages
+from typing import Literal
 
 from langchain_core.messages import ToolMessage
 from langchain_core.tools import tool
@@ -42,19 +43,20 @@ class BasicToolNode:
 
         return {'messages': outputs}
 
-def tools_condition(state):
-    last_message = state.get('messages', [])[-1]
-    if hasattr(last_message, 'tool_calls') and last_message.tool_calls:
-        print(last_message)
-        return 'tools'
-
-    return END
 
 class State(MessagesState):
     ...
 
 def tool_calling_llm(state):
     return {'messages': llm_with_tools.invoke(state['messages'])}
+
+def tools_condition(state: State) -> Literal['tools', END]:
+    last_message = state.get('messages', [])[-1]
+    if hasattr(last_message, 'tool_calls') and last_message.tool_calls:
+        return 'tools'
+
+    return END
+
 
 builder = StateGraph(State)
 
@@ -67,8 +69,9 @@ builder.add_edge('tools', END)
 
 graph = builder.compile()
 
-from langchain_core.messages import HumanMessage
+if __name__ == '__main__':
+    from langchain_core.messages import HumanMessage
 
-result = graph.invoke({"messages": [HumanMessage(content="Привет! Как дела?")]})
-for msg in result["messages"]:
-    print(f"[{msg.type}]: {msg.content}")
+    result = graph.invoke({"messages": [HumanMessage(content="Сколько будет 2 * 3?")]})
+    for msg in result["messages"]:
+        msg.pretty_print()
