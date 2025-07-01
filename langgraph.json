@@ -4,10 +4,10 @@
     ],
     "graphs": {
         "my_agent": "./main.py:make_graph",
-        "simple_graph": "./lessons/1_simple_graph/simple_graph.py:graph",
-        "chain": "./lessons/2_chain/chain.py:graph",
-        "router": "./lessons/3_router/router.py:graph",
-        "agent": "./lessons/4_agent/agent.py:react_graph"
+        "simple_graph": "./lessons/module_1/1_simple_graph/simple_graph.py:graph",
+        "chain": "./lessons/module_1/2_chain/chain.py:graph",
+        "router": "./lessons/module_1/3_router/router.py:graph",
+        "agent": "./lessons/module_1/4_agent/agent.py:react_graph"
     },
     "env": "./.env"
 }
