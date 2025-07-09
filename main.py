@@ -1,6 +1,6 @@
 from langchain_deepseek import ChatDeepSeek
 from dotenv import load_dotenv
-from langgraph.graph.graph import CompiledGraph
+from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import create_react_agent
 
 load_dotenv()
@@ -12,7 +12,7 @@ llm = ChatDeepSeek(
 )
 
 
-async def make_graph() -> CompiledGraph:
+async def make_graph() -> CompiledStateGraph:
     graph = create_react_agent(llm, tools=[])
     return graph
 
