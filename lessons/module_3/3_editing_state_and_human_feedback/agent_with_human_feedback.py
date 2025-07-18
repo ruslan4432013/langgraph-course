@@ -80,3 +80,4 @@ builder.add_edge("tools", "human_feedback")
 
 memory = MemorySaver()
 graph = builder.compile(interrupt_before=["human_feedback"], checkpointer=memory)
+graph_studio = builder.compile(interrupt_before=["human_feedback"])
