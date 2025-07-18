@@ -10,7 +10,8 @@
         "agent": "./lessons/module_1/4_agent/agent.py:react_graph",
         "parallel": "./lessons/module_2/1_state_graph/state_graph.py:graph",
         "lesson-2.3": "./lessons/module_2/3_multi_scheme/multi_scheme.py:graph",
-        "lesson-2.5": "./lessons/module_2/5_chat_bot_w_summary/chat_bot_w_summary.py:graph"
+        "lesson-2.5": "./lessons/module_2/5_chat_bot_w_summary/chat_bot_w_summary.py:graph",
+        "human_agent": "./lessons/module_3/3_editing_state_and_human_feedback/agent_with_human_feedback.py:graph"
     },
     "env": "./.env"
 }
