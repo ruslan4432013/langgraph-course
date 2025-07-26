@@ -15,7 +15,7 @@ for event in graph.stream(initial_input, thread, stream_mode="values"):
     print(event['messages'][-1])
 
 print('[Состояние]:')
-print(graph.get_state({'configurable': {'thread_id': '1'}}))
+print(graph.get_state(thread))
 
 print('[История графа]:')
 all_states = [s for s in graph.get_state_history(thread)]

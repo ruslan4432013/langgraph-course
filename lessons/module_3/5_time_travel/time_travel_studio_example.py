@@ -84,6 +84,32 @@ async def main():
     print(to_fork['next'])
     print(to_fork['checkpoint_id'])
 
+    forked_input = {"messages": HumanMessage(content="Умножь 3 и 5",
+                                             id=to_fork['values']['messages'][0]['id'])}
+    # Обновление состояния
+    forked_config = await client.threads.update_state(
+        thread["thread_id"],
+        forked_input,
+        checkpoint_id=to_fork['checkpoint_id']
+    )
+
+    async for chunk in client.runs.stream(
+            thread["thread_id"],
+            assistant_id="agent",
+            input=None,
+            stream_mode="updates",
+            checkpoint_id=forked_config['checkpoint_id']
+    ):
+        if chunk.data:
+            assisant_node = chunk.data.get('assistant', {}).get('messages', [])
+            tool_node = chunk.data.get('tools', {}).get('messages', [])
+            if assisant_node:
+                print("-" * 20 + "Assistant Node" + "-" * 20)
+                print(assisant_node[-1])
+            elif tool_node:
+                print("-" * 20 + "Tools Node" + "-" * 20)
+                print(tool_node[-1])
+
 
 if __name__ == "__main__":
     asyncio.run(main())
