@@ -12,7 +12,9 @@
         "lesson-2.3": "./lessons/module_2/3_multi_scheme/multi_scheme.py:graph",
         "lesson-2.5": "./lessons/module_2/5_chat_bot_w_summary/chat_bot_w_summary.py:graph",
         "human_agent": "./lessons/module_3/3_editing_state_and_human_feedback/agent_with_human_feedback.py:graph_studio",
-        "dynamic_breakpoints": "./lessons/module_3/4_dynamic_breakpoints/dynamic_breakpoints_graph.py:graph_studio"
+        "dynamic_breakpoints": "./lessons/module_3/4_dynamic_breakpoints/dynamic_breakpoints_graph.py:graph_studio",
+        "parallelization": "./lessons/module_4/1_parallelization/parallelization_examples.py:graph",
+        "parallel_assistant": "./lessons/module_4/1_parallelization/assistant_example.py:graph"
     },
     "env": "./.env"
 }
