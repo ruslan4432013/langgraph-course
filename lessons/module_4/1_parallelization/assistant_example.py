@@ -1,4 +1,5 @@
 import operator
+from pprint import pprint
 from typing import TypedDict, Annotated
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_community.document_loaders import WikipediaLoader
@@ -40,12 +41,11 @@ def search_web(state):
 def search_wikipedia(state):
     """Получить документы из Wikipedia"""
     # Поиск
-    search_docs = WikipediaLoader(query=state['question'], load_max_docs=2).load()
-
+    search_docs = WikipediaLoader(query=state['question'], load_max_docs=2, lang='ru').load()
     # Форматирование
     formatted_search_docs = "\n\n---\n\n".join(
         [
-            f'<Document source="{doc.metadata["source"]}" page="{doc.metadata.get("page", "")}">\n{doc.page_content}\n</Document>'
+            f'<Document source="{doc.metadata["source"]}" page="{doc.metadata.get("title", "")}">\n{doc.page_content}\n</Document>'
             for doc in search_docs
         ]
     )
@@ -57,7 +57,6 @@ def generate_answer(state):
     # Получить состояние
     context = state["context"]
     question = state["question"]
-    print(context)
 
     # Шаблон
     answer_template = """Ответьте на вопрос {question}, используя этот контекст: {context}"""
@@ -87,5 +86,5 @@ builder.add_edge("generate_answer", END)
 
 graph = builder.compile()
 
-result = graph.invoke({"question": "Каковы были квартальные доходы Nvidia за Q2 2024?"})
+result = graph.invoke({"question": "Что такое Nvidia?"})
 print(result['answer'].content)
