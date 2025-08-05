@@ -35,6 +35,7 @@ def search_web(state):
             for doc in docs
         ]
     )
+    print(f'[search_web] {formatted_search_docs=}')
     return {"context": [formatted_search_docs]}
 
 
@@ -49,6 +50,7 @@ def search_wikipedia(state):
             for doc in search_docs
         ]
     )
+    print(f'[search_wikipedia] {formatted_search_docs=}')
     return {"context": [formatted_search_docs]}
 
 

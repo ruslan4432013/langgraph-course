@@ -17,25 +17,25 @@ class ReturnNodeValue:
         return {"state": [self._value]}
 
 ### Пример 1
-# Добавляем узлы
-builder = StateGraph(State)
-
-# Инициализируем каждый узел с node_secret
-builder.add_node("a", ReturnNodeValue("Узел A"))
-builder.add_node("b", ReturnNodeValue("Узел B"))
-builder.add_node("c", ReturnNodeValue("Узел C"))
-builder.add_node("d", ReturnNodeValue("Узел D"))
-
-# Поток
-builder.add_edge(START, "a")
-builder.add_edge("a", "b")
-builder.add_edge("b", "c")
-builder.add_edge("c", "d")
-builder.add_edge("d", END)
-
-graph = builder.compile()
-
-print(graph.invoke({"state": []}))
+# # Добавляем узлы
+# builder = StateGraph(State)
+#
+# # Инициализируем каждый узел с node_secret
+# builder.add_node("a", ReturnNodeValue("Узел A"))
+# builder.add_node("b", ReturnNodeValue("Узел B"))
+# builder.add_node("c", ReturnNodeValue("Узел C"))
+# builder.add_node("d", ReturnNodeValue("Узел D"))
+#
+# # Поток
+# builder.add_edge(START, "a")
+# builder.add_edge("a", "b")
+# builder.add_edge("b", "c")
+# builder.add_edge("c", "d")
+# builder.add_edge("d", END)
+#
+# graph = builder.compile()
+#
+# print(graph.invoke({"state": []}))
 
 ### Пример 2
 # builder = StateGraph(State)
@@ -55,7 +55,7 @@ print(graph.invoke({"state": []}))
 # builder.add_edge("d", END)
 #
 # graph = builder.compile()
-
+#
 # from langgraph.errors import InvalidUpdateError
 #
 # try:
@@ -92,28 +92,28 @@ print(graph.invoke({"state": []}))
 
 
 ### Пример 4
-# class State(TypedDict):
-#     # Функция-редуктор operator.add делает это состояние только для добавления:
-#     state: Annotated[list, operator.add]
-#
-# builder = StateGraph(State)
-# # Инициализация каждого узла с node_secret
-# builder.add_node("a", ReturnNodeValue("Узел A"))
-# builder.add_node("b", ReturnNodeValue("Узел B"))
-# builder.add_node("b2", ReturnNodeValue("Узел B2"))
-# builder.add_node("c", ReturnNodeValue("Узел C"))
-# builder.add_node("d", ReturnNodeValue("Узел D"))
-#
-# # Поток выполнения
-# builder.add_edge(START, "a")
-# builder.add_edge("a", "b")
-# builder.add_edge("a", "c")
-# builder.add_edge("b", "b2")
-# builder.add_edge(["b2", "c"], "d")
-# builder.add_edge("d", END)
-#
-# graph = builder.compile()
-# print(graph.invoke({"state": []}))
+class State(TypedDict):
+    # Функция-редуктор operator.add делает это состояние только для добавления:
+    state: Annotated[list, operator.add]
+
+builder = StateGraph(State)
+# Инициализация каждого узла с node_secret
+builder.add_node("a", ReturnNodeValue("Узел A"))
+builder.add_node("b", ReturnNodeValue("Узел B"))
+builder.add_node("b2", ReturnNodeValue("Узел B2"))
+builder.add_node("c", ReturnNodeValue("Узел C"))
+builder.add_node("d", ReturnNodeValue("Узел D"))
+
+# Поток выполнения
+builder.add_edge(START, "a")
+builder.add_edge("a", "b")
+builder.add_edge("a", "c")
+builder.add_edge("b", "b2")
+builder.add_edge(["b2", "c"], "d")
+builder.add_edge("d", END)
+
+graph = builder.compile()
+print(graph.invoke({"state": []}))
 
 ### Пример 5
 # def sorting_reducer(left, right):
