@@ -88,5 +88,5 @@ builder.add_edge("generate_answer", END)
 
 graph = builder.compile()
 
-result = graph.invoke({"question": "Что такое Nvidia?"})
-print(result['answer'].content)
+# result = graph.invoke({"question": "Что такое Nvidia?"})
+# print(result['answer'].content)

@@ -113,7 +113,7 @@ builder.add_edge(["b2", "c"], "d")
 builder.add_edge("d", END)
 
 graph = builder.compile()
-print(graph.invoke({"state": []}))
+# print(graph.invoke({"state": []}))
 
 ### Пример 5
 # def sorting_reducer(left, right):
