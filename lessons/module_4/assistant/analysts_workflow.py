@@ -12,7 +12,7 @@ from lessons.module_4.assistant.model import llm
 
 class Analyst(BaseModel):
     affiliation: str = Field(
-        description="Основная аффилиация аналитика.",
+        description="Основная аффилиация аналитика. (только на руссом языке)",
     )
     name: str = Field(
         description="Имя аналитика."
@@ -43,11 +43,11 @@ class GenerateAnalystsState(TypedDict):
 
 
 analyst_instructions = """Тебе поручено создать набор персон аналитиков ИИ. Тщательно следуйте этим инструкциям:
-1. Сначала ознакомьтесь с темой исследования: {topic}
-2. Изучите любые редакционные замечания, которые при необходимости были предоставлены для руководства при создании аналитиков: {human_analyst_feedback}
-3. Определите наиболее интересные темы на основе документов и/или обратной связи выше.
-4. Выберите топ {max_analysts} тем.
-5. Назначьте по одному аналитику на каждую тему.
+1. Сначала ознакомься с темой исследования: {topic}
+2. Изучи любые редакционные замечания, которые при необходимости были предоставлены для руководства при создании аналитиков: {human_analyst_feedback}
+3. Определи наиболее интересные темы на основе документов и/или обратной связи выше.
+4. Выбери топ {max_analysts} тем.
+5. Назначь по одному аналитику на каждую тему.
 """
 
 
@@ -102,59 +102,37 @@ graph = builder.compile(interrupt_before=['human_feedback'])
 
 if __name__ == "__main__":
     # Ввод
-    max_analysts = 3
-    topic = "Преимущества внедрения LangGraph как мультиагентного фреймворка"
-    thread: RunnableConfig = {"configurable": {"thread_id": "1"}}
+    config: RunnableConfig = {"configurable": {"thread_id": "1"}}
+    entry_state = {"topic": "Преимущества внедрения LangGraph как мультиагентного фреймворка",
+                   "max_analysts": 3}
 
-    # Запустить граф до первой точки остановки
-    for event in app.stream({"topic": topic, "max_analysts": max_analysts}, thread, stream_mode="values"):
+    # Первая генерация (до прерывания)
+    for event in app.stream(entry_state, config, stream_mode="values"):
+        if analysts := event.get("analysts"):
+            for analyst in analysts:
+                print(analyst.persona)
+                print("-" * 50)
+
+    # Состояние указывает, что мы на human_feedback
+    state = app.get_state(config)
+    print("next =", state.next)
+    print('Просим добавить кого-то из стартапа (предпринимательская перспектива)...')
+    # Человек добавляет правки
+    app.update_state(config,
+                     {"human_analyst_feedback": "Добавить кого-то из стартапа (предпринимательская перспектива)"},
+                     as_node="human_feedback"
+                     )
+
+    # Продолжаем до обновлённого списка аналитиков
+    for event in app.stream(None, config, stream_mode="values"):
+        if analysts := event.get("analysts"):
+            for analyst in analysts:
+                print(analyst.persona)
+                print("-" * 50)
+
+    # Чтобы завершить — не передаём дополнительный фидбек
+    app.update_state(config, {"human_analyst_feedback": None}, as_node="human_feedback")
+
+    for event in app.stream(None, config, stream_mode="updates"):
         print(event)
-        # Просмотр результатов
-        analysts: list[Analyst] = event.get('analysts', [])
-        if analysts:
-            for analyst in analysts:
-                print(f"Имя: {analyst.name}")
-                print(f"Аффилиация: {analyst.affiliation}")
-                print(f"Роль: {analyst.role}")
-                print(f"Описание: {analyst.description}")
-                print("-" * 50)
-        print(analysts)
-    # Получить состояние и посмотреть следующий узел
-    state = app.get_state(thread)
-    print(f'{state.next=}')
-
-    # Теперь мы обновляем состояние так, как если бы мы были узлом human_feedback
-    app.update_state(thread, {
-        "human_analyst_feedback": "Добавить кого-то из стартапа, чтобы добавить предпринимательскую перспективу"},
-                     as_node="human_feedback")
-
-    # Продолжить выполнение графа
-    for event in app.stream(None, thread, stream_mode="values"):
-        # Просмотр результатов
-        analysts: list[Analyst] = event.get('analysts', [])
-        if analysts:
-            for analyst in analysts:
-                print(f"Имя: {analyst.name}")
-                print(f"Аффилиация: {analyst.affiliation}")
-                print(f"Роль: {analyst.role}")
-                print(f"Описание: {analyst.description}")
-                print("-" * 50)
-
-    # Если мы удовлетворены, то просто не предоставляем дополнительную обратную связь
-    further_feedback = None
-    app.update_state(thread, {"human_analyst_feedback": further_feedback}, as_node="human_feedback")
-
-    # Продолжить выполнение графа до завершения
-    for event in app.stream(None, thread, stream_mode="updates"):
-        print("--Узел--")
-        node_name = next(iter(event.keys()))
-        print(node_name)
-        final_state = app.get_state(thread)
-        analysts = final_state.values.get('analysts')
-        print(final_state.next)
-        for analyst in analysts:
-            print(f"Имя: {analyst.name}")
-            print(f"Аффилиация: {analyst.affiliation}")
-            print(f"Роль: {analyst.role}")
-            print(f"Описание: {analyst.description}")
-            print("-" * 50)
+        pass  # Граф завершится

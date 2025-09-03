@@ -1,72 +1,83 @@
-# Инструмент веб-поиска
-from typing import Literal
+import operator
+from typing import Annotated
 
-from langchain_community.document_loaders import WikipediaLoader
-from langchain_tavily import TavilySearch
-from langgraph.checkpoint.memory import MemorySaver
-from langgraph.constants import START, END
-from langgraph.graph import StateGraph
+from langchain_core.messages import SystemMessage
+from langchain_openai import ChatOpenAI
+from langgraph.graph import MessagesState
 
 from lessons.module_4.assistant.analysts_workflow import Analyst
-from lessons.module_4.assistant.expert import InterviewState, SearchQuery, generate_question
-from lessons.module_4.assistant.model import llm
 
-tavily_search = TavilySearch(max_results=3)
+llm = ChatOpenAI(
+    model='gpt-5',
+    base_url="https://api.proxyapi.ru/openai/v1"
+)
 
-# Инструмент поиска по Википедии
 
-# Теперь создаём узлы для поиска в вебе и в Википедии.
-# Также создадим узел для ответа на вопросы аналитика.
-# Наконец, создадим узлы для сохранения полного интервью и для написания резюме ("section") интервью.
+class InterviewState(MessagesState):
+    max_num_turns: int  # Количество ходов беседы
+    context: Annotated[list, operator.add]  # Исходные документы
+    analyst: Analyst  # Аналитик, задающий вопросы
+    interview: str  # Транскрипт интервью
+    sections: list  # Финальный ключ, который мы дублируем во внешнем состоянии для Send() API
 
-from langchain_core.messages import get_buffer_string, SystemMessage, HumanMessage, AIMessage
 
-# Инструкции для написания запроса поиска
+question_instructions = """
+Ты аналитик, задача которого — провести интервью с экспертом, чтобы узнать о конкретной теме. 
+Твоя цель — свести информацию к интересным и конкретным инсайтам, связанным с темой.
+1. Интересно: инсайты, которые люди сочтут удивительными или неочевидными.
+2. Конкретно: инсайты, которые избегают общих формулировок и включают конкретные примеры от эксперта.
+Вот твоя тема фокуса и набор целей: {goals}
+Начните с представления, используя имя, которое соответствует твоей персоне, а затем задай свой вопрос. 
+Продолжай задавать вопросы, чтобы уточнять и углублять твое понимание темы. Когда ты будешь удовлетворен своим пониманием, заверши интервью фразой: "Большое спасибо за вашу помощь!"
+Помните оставаться в образе на протяжении всего ответа, отражая персону и цели, которые вам предоставлены."""
+
+
+def generate_question(state: InterviewState):
+    analyst = state["analyst"]
+    messages = state["messages"]
+    system_message = question_instructions.format(goals=analyst.persona)
+    question = llm.invoke([SystemMessage(content=system_message)] + messages)
+    return {"messages": [question]}
+
+
+from pydantic import BaseModel, Field
+from langchain_tavily import TavilySearch
+
+
+class SearchQuery(BaseModel):
+    search_query: str = Field(None, description="Запрос для поиска при извлечении. Только на английском языке")
+
+
 search_instructions = SystemMessage(content=f"""Тебе будет дана беседа между аналитиком и экспертом. 
 Твоя цель — сгенерировать хорошо структурированный запрос для использования при извлечении и/или веб-поиске, связанный с беседой. 
 Сначала проанализируй всю беседу. Особое внимание удели последнему вопросу, заданному аналитиком. 
-Преобразуй этот последний вопрос в хорошо структурированный запрос для веб-поиска, используя русский язык.
+Преобразуй этот последний вопрос в хорошо структурированный запрос для веб-поиска.
 """)
+
+tavily_search = TavilySearch(max_results=20)
 
 
 def search_web(state: InterviewState):
-    """Извлечь документы через веб-поиск"""
-    # Подготовка запросa к поиску
     structured_llm = llm.with_structured_output(SearchQuery)
-    search_query = structured_llm.invoke([search_instructions] + state['messages'])
-    # Поиск
+    search_query = structured_llm.invoke([search_instructions] + state["messages"])
     search_docs = tavily_search.invoke(search_query.search_query)
-    if not search_docs or not 'results' in search_docs:
+    if not search_docs or not "results" in search_docs:
         return {"context": []}
-    
-    docs = search_docs['results']
-    # Форматирование
-    formatted_search_docs = "\n\n---\n\n".join(
-        [
-            f'\n{doc["content"]}\n'
-            for doc in docs
-        ]
-    )
+    docs = search_docs["results"]
+    formatted_search_docs = "\n\n---\n\n".join([f'\n{doc["content"]}\n' for doc in docs])
     return {"context": [formatted_search_docs]}
 
 
+from langchain_community.document_loaders import WikipediaLoader
+
+
 def search_wikipedia(state: InterviewState):
-    """Извлечь документы из Википедии"""
-    # Подготовка запроса к поиску
     structured_llm = llm.with_structured_output(SearchQuery)
-    search_result = structured_llm.invoke([search_instructions] + state['messages'])
-    # Поиск
-    search_docs = WikipediaLoader(query=search_result.search_query, load_max_docs=2, lang='ru').load()
+    search_result = structured_llm.invoke([search_instructions] + state["messages"])
+    search_docs = WikipediaLoader(query=search_result.search_query, load_max_docs=2).load()
     if not search_docs:
         return {"context": []}
-
-    # Форматирование
-    formatted_search_docs = "\n\n---\n\n".join(
-        [
-            f'\n{doc.page_content}\n'
-            for doc in search_docs
-        ]
-    )
+    formatted_search_docs = "\n\n---\n\n".join([f'\n{doc.page_content}\n' for doc in search_docs])
     return {"context": [formatted_search_docs]}
 
 
@@ -84,56 +95,42 @@ answer_instructions = """Ты — эксперт, которого опраши�
 
 
 def generate_answer(state: InterviewState):
-    """Узел для ответа на вопрос"""
-    # Получить состояние
     analyst = state["analyst"]
     messages = state["messages"]
     context = state["context"]
-
-    # Сформировать системное сообщение для ответа
     system_message = answer_instructions.format(goals=analyst.persona, context=context)
     answer = llm.invoke([SystemMessage(content=system_message)] + messages)
-
-    # Назвать сообщение как от эксперта
     answer.name = "эксперт"
-
-    # Добавить его в состояние
     return {"messages": [answer]}
 
 
-def save_interview(state: InterviewState):
-    """Сохранить интервью"""
-    # Получить сообщения
+from langchain_core.messages import AIMessage
+from typing import Literal
+
+
+def route_messages(state: InterviewState, name: str = "эксперт") -> Literal["save_interview", "ask_question"]:
     messages = state["messages"]
-    # Конвертировать интервью в строку
-    interview = get_buffer_string(messages)
-    # Сохранить в ключ interviews
-    return {"interview": interview}
-
-
-def route_messages(state: InterviewState, name: str = "эксперт") -> Literal['save_interview', 'ask_question']:
-    """Маршрутизировать между вопросом и ответом"""
-    # Получить сообщения
-    messages = state["messages"]
-    max_num_turns = state.get('max_num_turns', 2)
-
-    # Проверить количество ответов эксперта
+    max_num_turns = state.get("max_num_turns", 2)
     num_responses = len([m for m in messages if isinstance(m, AIMessage) and m.name == name])
-
-    # Завершить, если эксперт ответил больше, чем максимально разрешено
     if num_responses >= max_num_turns:
-        return 'save_interview'
-
-    # Этот маршрутизатор запускается после каждой пары вопрос-ответ
-    # Получить последний заданный вопрос, чтобы проверить, сигнализирует ли он о завершении обсуждения
+        return "save_interview"
     last_question = messages[-2]
-    if "Большое спасибо за твою помощь" in last_question.content:
-        return 'save_interview'
-
+    if "Большое спасибо за вашу помощь!" in last_question.content:
+        return "save_interview"
     return "ask_question"
 
 
-section_writer_instructions = """Ты — эксперт-технический писатель. Твоя задача — создать короткий, легко усваиваемый раздел отчёта на основе набора исходных документов-источников.
+from langchain_core.messages import get_buffer_string
+
+
+def save_interview(state: InterviewState):
+    messages = state["messages"]
+    interview = get_buffer_string(messages)
+    return {"interview": interview}
+
+
+section_writer_instructions = """Ты — эксперт-технический писатель. 
+Твоя задача — создать короткий, легко усваиваемый раздел отчёта на основе набора исходных документов-источников.
 1. Проанализируй содержимое исходных документов:
    - Имя каждого исходного документа указано в начале документа с тегом 
 Источники
@@ -141,34 +138,35 @@ section_writer_instructions = """Ты — эксперт-технический 
 
 [2] Название ссылки или документа
 
-7. Объединяй источники. Например, это неверно: [3] https://ai.meta.com/blog/meta-llama-3-1/ [4] https://ai.meta.com/blog/meta-llama-3-1/ — не должно быть дублирующихся источников. Должно быть просто: [3] https://ai.meta.com/blog/meta-llama-3-1/
+7. Объединяй источники. Например, это неверно: [3] https://ai.meta.com/blog/meta-llama-3-1/ [4] https://ai.meta.com/blog/meta-llama-3-1/ — не должно быть дублирующихся источников. 
+Должно быть просто: [3] https://ai.meta.com/blog/meta-llama-3-1/
 
 8. Финальная проверка:
 
 Убедись, что отчет следует требуемой структуре
 Не добавляй вступления перед заголовком отчета
 Проверь, что все руководства соблюдены
-
 """
+
+from langchain_core.messages import HumanMessage
 
 
 def write_section(state: InterviewState):
-    """Узел для ответа на вопрос"""
-    # Получить состояние
     interview = state["interview"]
     context = state["context"]
     analyst = state["analyst"]
-    # Написать раздел, используя либо собранные документы из интервью (context), либо само интервью (interview)
     system_message = section_writer_instructions.format(focus=analyst.description)
     section = llm.invoke(
-        [SystemMessage(content=system_message)]
-        + [HumanMessage(content=f"Используй этот источник для написания раздела: {context}")]
+        [SystemMessage(content=system_message)] +
+        [HumanMessage(content=f"Используй этот источник: {context}")]
     )
-    # Добавить его в состояние
     return {"sections": [section.content]}
 
 
-# Добавить узлы и ребра
+from langgraph.graph import StateGraph
+from langgraph.constants import START, END
+from langgraph.checkpoint.memory import MemorySaver
+
 interview_builder = StateGraph(InterviewState)
 interview_builder.add_node("ask_question", generate_question)
 interview_builder.add_node("search_web", search_web)
@@ -177,7 +175,6 @@ interview_builder.add_node("answer_question", generate_answer)
 interview_builder.add_node("save_interview", save_interview)
 interview_builder.add_node("write_section", write_section)
 
-# Поток
 interview_builder.add_edge(START, "ask_question")
 interview_builder.add_edge("ask_question", "search_web")
 interview_builder.add_edge("ask_question", "search_wikipedia")
@@ -187,19 +184,18 @@ interview_builder.add_conditional_edges("answer_question", route_messages)
 interview_builder.add_edge("save_interview", "write_section")
 interview_builder.add_edge("write_section", END)
 
-# Интервью
 memory = MemorySaver()
 interview_graph = interview_builder.compile(checkpointer=memory).with_config(run_name="Проведение интервью")
-graph = interview_builder.compile().with_config(run_name="Проведение интервью")
 
-# Выбрать одного аналитика
-# Здесь мы запускаем интервью, передавая индекс статьи llama3.1, которая связана с нашей темой.
 if __name__ == "__main__":
-    topic = "Какая польза применения LangGraph фреймворка в компании"
-    analyst = Analyst(affiliation='Лаборатория LangGraph AI', name='Игорь Лебедев',
-                      role='Аналитик по архитектуре и взаимодействию мультиагентной платформы LangGraph',
-                      description='Фокус на архитектурные принципы LangGraph, протоколы обмена между агентами, координацию задач, управление контекстом, безопасность и отказоустойчивость мультиагентной среды.')
+    topic = "пользе применения LangGraph фреймворка в компании"
+    analyst = Analyst(
+        affiliation="Лаборатория LangGraph AI", name="Игорь Лебедев",
+        role="Аналитик по архитектуре и взаимодействию мультиагентной платформы LangGraph",
+        description="Фокус на архитектурные принципы LangGraph..."
+    )
+
     messages = [HumanMessage(f"Итак, вы сказали, что пишете статью о {topic}?")]
     thread = {"configurable": {"thread_id": "1"}}
     interview = interview_graph.invoke({"analyst": analyst, "messages": messages, "max_num_turns": 2}, thread)
-    print(interview['sections'][0])
+    print(interview["sections"][0])
