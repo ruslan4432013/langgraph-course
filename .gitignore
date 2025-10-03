@@ -205,6 +205,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+/_get_project_structure.py
 .env
 .venv
 env/
