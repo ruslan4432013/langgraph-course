@@ -18,9 +18,7 @@
     "subgraphs_assistant": "./lessons/module_4/subgraph/entry_graph.py:graph",
     "qs_builder": "./lessons/module_4/subgraph/question_summarization_subgraph.py:graph",
     "fa_builder": "./lessons/module_4/subgraph/failure_analysis_subgraph.py:graph",
-    "joke_generator": "./lessons/module_4/map_reduce/best_joke_graph.py:app",
-    "answer_generator": "./lessons/module_4/assistant/answer_generation.py:graph",
-    "entry_agent": "./lessons/module_4/assistant/entry_agent.py:graph"
+    "joke_generator": "./lessons/module_4/map_reduce/best_joke_graph.py:app"
   },
   "env": "./.env"
 }

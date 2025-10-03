@@ -1,10 +1,10 @@
-from langchain_openai import ChatOpenAI # Подсказки, которые мы будем использовать
-from langgraph.types import Send
-
 import operator
 from typing import Annotated
-from typing_extensions import TypedDict
+
+from langchain_openai import ChatOpenAI  # Подсказки, которые мы будем использовать
+from langgraph.types import Send
 from pydantic import BaseModel
+from typing_extensions import TypedDict
 
 subjects_prompt = """Сгенерируй список из 3 подтем, которые все относятся к общей теме: {topic}."""
 
@@ -67,6 +67,7 @@ def best_joke(state: OverallState):
 
 
 from langgraph.graph import END, StateGraph, START
+
 
 class InputState(TypedDict):
     topic: str

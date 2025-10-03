@@ -4,6 +4,7 @@ from typing import Literal
 from langchain_openai import ChatOpenAI
 
 model = ChatOpenAI(
+    api_key='YOUR_API_KEY',
     model='gpt-4o-mini',
     temperature=0.1,
     max_retries=2,
@@ -17,8 +18,11 @@ from langgraph.graph import MessagesState
 class State(MessagesState):
     summary: str
 
+
 #
 from langchain_core.messages import SystemMessage, HumanMessage, RemoveMessage
+
+
 #
 #
 # # Определяем логику вызова модели
@@ -37,6 +41,7 @@ def call_model(state: State):
 
     response = model.invoke(messages)
     return {"messages": response}
+
 
 #
 def summarize_conversation(state: State):
@@ -60,9 +65,13 @@ def summarize_conversation(state: State):
     # Удаляем все сообщения, кроме двух последних
     delete_messages = [RemoveMessage(id=m.id) for m in state["messages"][:-2]]
     return {"summary": response.content, "messages": delete_messages}
+
+
 #
 #
 from langgraph.graph import END
+
+
 #
 #
 # # Определяем, нужно ли завершать или суммировать беседу
@@ -75,6 +84,8 @@ def should_continue(state: State) -> Literal['summarize_conversation', END]:
         return "summarize_conversation"
     # Иначе можно завершить
     return END
+
+
 #
 #
 from langgraph.checkpoint.memory import MemorySaver
