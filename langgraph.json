@@ -3,8 +3,7 @@
     "./requirements.txt"
   ],
   "graphs": {
-    "web_rag_app": "./src/applications/web_rag_app/web_rag_app.py:graph",
-    "web_rag_app_with_query_analyse": "./src/applications/web_rag_app/web_rag_app_with_analyze.py:graph"
+    "web_rag_app": "./src/web_rag_application/web_rag_application.py:graph"
   },
   "env": "./.env"
 }
