@@ -1,3 +1,5 @@
+langchain-experimental
+langchain-writer
 beautifulsoup4
 faiss-cpu
 pdfplumber
