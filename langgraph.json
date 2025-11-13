@@ -3,22 +3,7 @@
     "./requirements.txt"
   ],
   "graphs": {
-    "my_agent": "./main.py:make_graph",
-    "simple_graph": "./lessons/module_1/1_simple_graph/simple_graph.py:graph",
-    "chain": "./lessons/module_1/2_chain/chain.py:graph",
-    "router": "./lessons/module_1/3_router/router.py:graph",
-    "agent": "./lessons/module_1/4_agent/agent.py:react_graph",
-    "parallel": "./lessons/module_2/1_state_graph/state_graph.py:graph",
-    "lesson-2.3": "./lessons/module_2/3_multi_scheme/multi_scheme.py:graph",
-    "lesson-2.5": "./lessons/module_2/5_chat_bot_w_summary/chat_bot_w_summary.py:graph",
-    "human_agent": "./lessons/module_3/3_editing_state_and_human_feedback/agent_with_human_feedback.py:graph_studio",
-    "dynamic_breakpoints": "./lessons/module_3/4_dynamic_breakpoints/dynamic_breakpoints_graph.py:graph_studio",
-    "parallelization": "./lessons/module_4/1_parallelization/parallelization_examples.py:graph",
-    "parallel_assistant": "./lessons/module_4/1_parallelization/assistant_example.py:graph",
-    "subgraphs_assistant": "./lessons/module_4/subgraph/entry_graph.py:graph",
-    "qs_builder": "./lessons/module_4/subgraph/question_summarization_subgraph.py:graph",
-    "fa_builder": "./lessons/module_4/subgraph/failure_analysis_subgraph.py:graph",
-    "joke_generator": "./lessons/module_4/map_reduce/best_joke_graph.py:app"
+    "my_agent": "./main.py:make_graph"
   },
   "env": "./.env"
 }
