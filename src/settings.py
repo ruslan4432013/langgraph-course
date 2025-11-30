@@ -10,10 +10,13 @@ class Settings(BaseSettings):
     LANGSMITH_API_KEY: str
     LANGSMITH_PROJECT: str
 
-    API_KEY: SecretStr
-    TAVILY_API_KEY: SecretStr
+    OPENAI_API_KEY: SecretStr
+    OPENAI_BASE_URL: str
 
     model_config = SettingsConfigDict(env_file=env_path, env_file_encoding="utf-8")
 
 
 settings = Settings()
+
+if __name__ == "__main__":
+    print(settings.model_dump())
