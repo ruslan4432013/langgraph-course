@@ -6,9 +6,14 @@
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_core.documents import Document
 from langchain_openai import OpenAIEmbeddings
+from src.settings import settings
 
-embeddings = OpenAIEmbeddings(size=4096)
-vector_store = InMemoryVectorStore(embedding=embeddings)
+# Инициализация модели
+embeddings_model = OpenAIEmbeddings(
+    api_key=settings.OPENAI_API_KEY,
+    base_url=settings.OPENAI_BASE_URL,
+)
+vector_store = InMemoryVectorStore(embedding=embeddings_model)
 
 # Добавление документов
 documents = [

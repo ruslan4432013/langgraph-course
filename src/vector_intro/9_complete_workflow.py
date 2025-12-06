@@ -6,6 +6,7 @@
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_core.documents import Document
 from langchain_openai import OpenAIEmbeddings
+from src.settings import settings
 
 print("=" * 70)
 print("ПОЛНЫЙ РАБОЧИЙ ПРОЦЕСС ВЕКТОРНОГО ХРАНИЛИЩА")
@@ -14,8 +15,11 @@ print("=" * 70)
 # ШАГИ 1: Инициализация
 print("\n[ШАГ 1] Инициализация векторного хранилища")
 print("─" * 70)
-embeddings = OpenAIEmbeddings(size=4096)
-vector_store = InMemoryVectorStore(embedding=embeddings)
+embeddings_model = OpenAIEmbeddings(
+    api_key=settings.OPENAI_API_KEY,
+    base_url=settings.OPENAI_BASE_URL,
+)
+vector_store = InMemoryVectorStore(embedding=embeddings_model)
 print("✓ Хранилище создано")
 
 # ШАГ 2: Подготовка документов
