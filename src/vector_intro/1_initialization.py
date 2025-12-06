@@ -4,7 +4,7 @@
 """
 
 from langchain_core.vectorstores import InMemoryVectorStore
-from langchain_core.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 # Инициализация с фальшивой моделью эмбеддингов для демонстрации
 embeddings = OpenAIEmbeddings(size=4096)

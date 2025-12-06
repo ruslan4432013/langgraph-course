@@ -5,7 +5,7 @@
 
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_core.documents import Document
-from langchain_core.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 print("=" * 70)
 print("ПОЛНЫЙ РАБОЧИЙ ПРОЦЕСС ВЕКТОРНОГО ХРАНИЛИЩА")

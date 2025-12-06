@@ -5,7 +5,7 @@
 
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_core.documents import Document
-from langchain_core.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 embeddings = OpenAIEmbeddings(size=4096)
 vector_store = InMemoryVectorStore(embedding=embeddings)
