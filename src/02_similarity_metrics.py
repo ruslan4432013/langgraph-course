@@ -33,16 +33,16 @@ vec_c = [1.0, 0.0, 0.0]  # Идентичен vec_a
 vec_d = [0.7, 0.7, 0.0]  # Между X и Y (под углом 45°)
 
 print("=== Сравнение идентичных векторов (vec_a и vec_c) ===")
-# print(f"Косинусное сходство: {cosine_similarity(vec_a, vec_c):.4f}")  # 1.0
-# print(f"Евклидово расстояние: {euclidean_distance(vec_a, vec_c):.4f}")  # 0.0
+print(f"Косинусное сходство: {cosine_similarity(vec_a, vec_c):.4f}")  # 1.0
+print(f"Евклидово расстояние: {euclidean_distance(vec_a, vec_c):.4f}")  # 0.0
 print(f"Скалярное произведение: {dot_product(vec_a, vec_c):.4f}")  # 1.0
 
 print("\n=== Сравнение перпендикулярных векторов (vec_a и vec_b) ===")
-# print(f"Косинусное сходство: {cosine_similarity(vec_a, vec_b):.4f}")  # 0.0
-# print(f"Евклидово расстояние: {euclidean_distance(vec_a, vec_b):.4f}")  # ~1.41
+print(f"Косинусное сходство: {cosine_similarity(vec_a, vec_b):.4f}")  # 0.0
+print(f"Евклидово расстояние: {euclidean_distance(vec_a, vec_b):.4f}")  # ~1.41
 print(f"Скалярное произведение: {dot_product(vec_a, vec_b):.4f}")  # 0.0
 #
 print("\n=== Сравнение похожих векторов (vec_a и vec_d) ===")
-# print(f"Косинусное сходство: {cosine_similarity(vec_a, vec_d):.4f}")  # ~0.71
-# print(f"Евклидово расстояние: {euclidean_distance(vec_a, vec_d):.4f}")  # ~0.76
+print(f"Косинусное сходство: {cosine_similarity(vec_a, vec_d):.4f}")  # ~0.71
+print(f"Евклидово расстояние: {euclidean_distance(vec_a, vec_d):.4f}")  # ~0.76
 print(f"Скалярное произведение: {dot_product(vec_a, vec_d):.4f}")  # 0.7
