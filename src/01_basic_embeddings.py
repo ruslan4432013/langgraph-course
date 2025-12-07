@@ -7,7 +7,7 @@ from langchain_openai import OpenAIEmbeddings
 
 from src.settings import settings
 
-# Инициализация модели (требуется OPENAI_API_KEY в переменных окружения)
+# Инициализация модели (требуется OPENAI_API_KEY)
 embeddings_model = OpenAIEmbeddings(
     api_key=settings.OPENAI_API_KEY,
     base_url=settings.OPENAI_BASE_URL,

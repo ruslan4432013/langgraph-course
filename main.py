@@ -16,7 +16,7 @@ llm = ChatDeepSeek(
 
 @tool
 def add(x: int, y: int):
-    """Add two numbers together."""
+    """Сложить два числа."""
     return x + y
 
 
@@ -26,4 +26,4 @@ async def make_graph() -> CompiledStateGraph:
 
 
 if __name__ == '__main__':
-    print(llm.invoke('Hello world'))
+    print(llm.invoke('Привет, мир!'))
