@@ -3,9 +3,10 @@
 Демонстрирует: семантический поиск с фильтрацией по метаданным
 """
 
-from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_core.documents import Document
+from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_openai import OpenAIEmbeddings
+
 from src.settings import settings
 
 # Инициализация модели
@@ -44,9 +45,15 @@ query = "Python программирование"
 print("✓ Выполнен поиск с фильтрацией по метаданным")
 print(f"Запрос: '{query}'\n")
 
+
 # Примечание: InMemoryVectorStore имеет ограниченную поддержку фильтрации
 # В реальных приложениях используйте специализированные хранилища (Pinecone, Chroma и т.д.)
-results = vector_store.similarity_search(query, k=3)
+
+def filter_by_source(document: Document) -> bool:
+    return document.metadata.get("source", None) == "article"
+
+
+results = vector_store.similarity_search(query, k=3, filter=filter_by_source)
 
 print("Все результаты (без фильтрации):")
 for i, doc in enumerate(results, 1):
