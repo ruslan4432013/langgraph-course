@@ -6,12 +6,13 @@ invoke и batch, а также интеграцию с конфигурацие�
 
 RunnableGenerator - оборачивает генератор для потоковой передачи данных.
 """
+from collections.abc import Iterable
 
 from langchain_core.runnables import RunnableLambda, RunnableGenerator
 
-
 # Пример 1: Базовое использование RunnableLambda
 print("=== RunnableLambda: Базовое использование ===\n")
+
 
 def calculate_area(radius: float) -> float:
     """Вычисляет площадь круга"""
@@ -34,9 +35,9 @@ for r, a in zip(radii, areas):
     print(f"  Радиус {r}: {a:.2f}")
 print()
 
-
 # Пример 2: RunnableLambda с преобразованием типов
 print("=== RunnableLambda с преобразованием типов ===\n")
+
 
 def process_person_data(data: dict) -> str:
     """Обрабатывает данные человека и возвращает приветствие"""
@@ -63,14 +64,16 @@ for result in results:
     print(result)
 print()
 
-
 # Пример 3: RunnableGenerator для потоковой передачи
 print("=== RunnableGenerator: Потоковая передача ===\n")
 
-def count_to_n(n: int):
+
+def count_to_n(inputs: Iterable[int]):
     """Генератор, выдающий числа от 1 до n"""
-    for i in range(1, n + 1):
-        yield f"Число {i}"
+    for n in inputs:
+        n_int = int(n)
+        for i in range(1, n_int + 1):
+            yield f"Число {i}"
 
 
 # Оборачиваем генератор в RunnableGenerator
@@ -82,9 +85,9 @@ for item in counter_runnable.stream(5):
     print(f"  - {item}")
 print()
 
-
 # Пример 4: RunnableGenerator с обработкой данных
 print("=== RunnableGenerator: Обработка списка ===\n")
+
 
 def process_items_stream(items: list):
     """Генератор, обрабатывающий список элементов"""
@@ -102,9 +105,9 @@ for result in items_runnable.stream(items):
     print(f"  {result}")
 print()
 
-
 # Пример 5: Композиция RunnableLambda
 print("=== Композиция RunnableLambda ===\n")
+
 
 def text_to_uppercase(text: str) -> str:
     """Преобразует в верхний регистр"""
@@ -123,9 +126,9 @@ def create_report(count: int) -> str:
 
 # Создаем цепочку: строка -> вверхний регистр -> подсчет -> отчет
 text_chain = (
-    RunnableLambda(text_to_uppercase) |
-    RunnableLambda(count_characters) |
-    RunnableLambda(create_report)
+        RunnableLambda(text_to_uppercase) |
+        RunnableLambda(count_characters) |
+        RunnableLambda(create_report)
 )
 
 result = text_chain.invoke("hello world")
@@ -134,9 +137,9 @@ print(f"1. HELLO WORLD")
 print(f"2. Длина: 11")
 print(f"3. {result}\n")
 
-
 # Пример 6: RunnableLambda с конфигурацией
 print("=== RunnableLambda с конфигурацией ===\n")
+
 
 def greet_user(name: str) -> str:
     """Приветствует пользователя"""
@@ -157,9 +160,9 @@ result = greeting_runnable.invoke(
 print(f"Результат: {result}")
 print(f"Конфигурация сохранена для отслеживания\n")
 
-
 # Пример 7: RunnableLambda для обработки ошибок
 print("=== RunnableLambda с обработкой ошибок ===\n")
+
 
 def safe_division(data: dict) -> str:
     """Безопасное деление"""

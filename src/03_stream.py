@@ -1,16 +1,17 @@
 """
 Демонстрация методов stream и astream - потоковая передача
 
-stream возвращает итератор по частям результата. Используется для реализации 
+stream возвращает итератор по частям результата. Используется для реализации
 прогрессивного вывода в пользовательском интерфейсе.
 astream - асинхронный аналог stream.
 """
+from typing import Iterable
 
 from langchain_core.runnables import RunnableLambda
 
-
 # Пример 1: Простая потоковая передача
 print("=== Stream: Построчный вывод ===\n")
+
 
 def generate_greeting(name: str) -> str:
     """Генерирует приветствие"""
@@ -26,22 +27,21 @@ for char in result:
     print(char, end="", flush=True)
 print("\n")
 
-
 # Пример 2: Потоковая передача со списками
 print("=== Stream: Обработка списков ===\n")
+
 
 def process_list_as_stream(numbers: list[int]) -> str:
     """Обрабатывает список и возвращает результат построчно"""
     results = []
     for num in numbers:
-        results.append(f"Число: {num}, Квадрат: {num**2}")
+        results.append(f"Число: {num}, Квадрат: {num ** 2}")
     return "\n".join(results)
 
 
 list_runnable = RunnableLambda(process_list_as_stream)
 result = list_runnable.invoke([1, 2, 3, 4, 5])
 print(result)
-
 
 # Пример 3: Асинхронный stream
 print("\n=== Асинхронный Stream ===\n")
@@ -51,14 +51,14 @@ import asyncio
 
 async def async_stream_example():
     """Демонстрирует асинхронный stream"""
-    
+
     async def async_operation(x: int) -> str:
         """Асинхронная операция"""
         await asyncio.sleep(0.1)
         return f"Обработана задача для {x}"
-    
+
     async_runnable = RunnableLambda(async_operation)
-    
+
     # astream возвращает асинхронный итератор
     async for result in async_runnable.astream(5):
         print(f"Результат: {result}")
@@ -74,10 +74,13 @@ print("\n=== RunnableGenerator: Истинная потоковая переда
 from langchain_core.runnables import RunnableGenerator
 
 
-def number_generator(n: int):
+def number_generator(inputs: Iterable[int]):
     """Генератор, выдающий числа от 1 до n"""
-    for i in range(1, n + 1):
-        yield f"Число {i}"
+
+    for n in inputs:
+        n_int = int(n)
+        for i in range(1, n_int + 1):
+            yield f"Число {i}"
 
 
 generator_runnable = RunnableGenerator(number_generator)
@@ -87,13 +90,13 @@ print("Результаты из генератора:")
 for item in generator_runnable.stream(5):
     print(f"  - {item}")
 
-
 # Пример 5: Комбинирование stream с конвейерами
 print("\n=== Stream в конвейере ===\n")
 
+
 def add_prefix(text: str) -> str:
     """Добавляет префикс к тексту"""
-    return f"[ОБРАБОТАНО] {text}"
+    return f"[ОБРАБОТАНО] {text}\n"
 
 
 # Создаем конвейер: генератор -> преобразование

@@ -8,9 +8,10 @@
 - Конфигурацию
 - Пакетную обработку
 """
+import json
+from collections.abc import Iterable
 
 from langchain_core.runnables import RunnableLambda, RunnableGenerator
-import json
 
 
 # ==================== Определение компонентов ====================
@@ -75,9 +76,9 @@ print("=== Пример 1: Простая последовательность =
 
 # Создаем простую цепочку валидации email
 email_chain = (
-    RunnableLambda(validate_email) |
-    RunnableLambda(lambda result: result["email"]) |
-    RunnableLambda(extract_domain)
+        RunnableLambda(validate_email) |
+        RunnableLambda(lambda result: result["email"]) |
+        RunnableLambda(extract_domain)
 )
 
 try:
@@ -86,19 +87,18 @@ try:
 except Exception as e:
     print(f"Ошибка: {e}\n")
 
-
 # ==================== Параллельная обработка ====================
 
 print("=== Пример 2: Параллельная проверка email ===\n")
 
 # Параллельная обработка: валидация -> (извлечение домена + проверка репутации)
 parallel_email_chain = (
-    RunnableLambda(lambda email: email) |
-    {
-        "domain": RunnableLambda(extract_domain),
-        "domain_info": RunnableLambda(extract_domain) | RunnableLambda(check_domain_reputation),
-        "email_length": RunnableLambda(count_string_length)
-    }
+        RunnableLambda(lambda email: email) |
+        {
+            "domain": RunnableLambda(extract_domain),
+            "domain_info": RunnableLambda(extract_domain) | RunnableLambda(check_domain_reputation),
+            "email_length": RunnableLambda(count_string_length)
+        }
 )
 
 result = parallel_email_chain.invoke("user@gmail.com")
@@ -106,14 +106,14 @@ print(f"Параллельная обработка email:")
 print(json.dumps(result, ensure_ascii=False, indent=2))
 print()
 
-
 # ==================== Обработка пароля ===
 
 print("=== Пример 3: Проверка надежности пароля ===\n")
 
 password_chain = (
-    RunnableLambda(check_password_strength) |
-    RunnableLambda(lambda result: f"Надежность: {result['strength_percent']:.0f}% - {'Сильный' if result['is_strong'] else 'Слабый'}")
+        RunnableLambda(check_password_strength) |
+        RunnableLambda(lambda
+                           result: f"Надежность: {result['strength_percent']:.0f}% - {'Сильный' if result['is_strong'] else 'Слабый'}")
 )
 
 passwords = ["weak", "Medium123", "Strong@Pass123", "VeryStr0ng!Pwd"]
@@ -122,7 +122,6 @@ for pwd in passwords:
     result = password_chain.invoke(pwd)
     print(f"  '{pwd}': {result}")
 print()
-
 
 # ==================== Batch обработка ===
 
@@ -137,9 +136,9 @@ emails = [
 
 # Цепочка для обработки одного email
 single_email_chain = (
-    RunnableLambda(extract_domain) |
-    RunnableLambda(check_domain_reputation) |
-    RunnableLambda(lambda result: f"{result['domain']}: {'Проверенный' if result['trusted'] else 'Неизвестный'}")
+        RunnableLambda(extract_domain) |
+        RunnableLambda(check_domain_reputation) |
+        RunnableLambda(lambda result: f"{result['domain']}: {'Проверенный' if result['trusted'] else 'Неизвестный'}")
 )
 
 # Batch обработка
@@ -149,10 +148,10 @@ for email, result in zip(emails, results):
     print(f"  {email}: {result}")
 print()
 
-
 # ==================== Сложная композиция ===
 
 print("=== Пример 5: Полная регистрация пользователя ===\n")
+
 
 def create_user_profile(data: dict) -> dict:
     """Создает профиль пользователя"""
@@ -171,16 +170,15 @@ def convert_to_json(data: dict) -> str:
 
 # Полная цепочка регистрации
 registration_chain = (
-    RunnableLambda(prepare_user_registration) |
-    RunnableLambda(create_user_profile) |
-    RunnableLambda(convert_to_json)
+        RunnableLambda(prepare_user_registration) |
+        RunnableLambda(create_user_profile) |
+        RunnableLambda(convert_to_json)
 )
 
 result = registration_chain.invoke("newuser@gmail.com")
 print("Профиль нового пользователя:")
 print(result)
 print()
-
 
 # ==================== Использование конфигурации ===
 
@@ -203,9 +201,8 @@ results = config_chain.batch(
 
 print("Проверка репутации доменов с конфигурацией:")
 for domain, result in zip(domains, results):
-    print(f"  {domain}: {result['reputation_score']*100:.0f}% репутация")
+    print(f"  {domain}: {result['reputation_score'] * 100:.0f}% репутация")
 print()
-
 
 # ==================== Обработка ошибок ===
 
@@ -234,23 +231,24 @@ for email, result in zip(test_emails, results):
         print(f"  {email}: ✓ {result['valid']}")
 print()
 
-
 # ==================== Генератор ===
 
 print("=== Пример 8: RunnableGenerator для отчета ===\n")
 
-def generate_validation_report(emails: list):
+
+def generate_validation_report(inputs: Iterable[list]):
     """Генератор для создания отчета по валидации"""
-    yield "=== Отчет валидации email ==="
-    yield f"Всего email: {len(emails)}"
-    yield ""
-    
-    for i, email in enumerate(emails, 1):
-        try:
-            validate_email(email)
-            yield f"{i}. {email}: ✓ Валидный"
-        except ValueError:
-            yield f"{i}. {email}: ✗ Некорректный"
+    for emails in inputs:
+        yield "=== Отчет валидации email ==="
+        yield f"Всего email: {len(emails)}"
+        yield ""
+
+        for i, email in enumerate(emails, 1):
+            try:
+                validate_email(email)
+                yield f"{i}. {email}: ✓ Валидный"
+            except ValueError:
+                yield f"{i}. {email}: ✗ Некорректный"
 
 
 report_runnable = RunnableGenerator(generate_validation_report)
