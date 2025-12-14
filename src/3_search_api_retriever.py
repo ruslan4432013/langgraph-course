@@ -1,3 +1,4 @@
+from langchain_core.callbacks import CallbackManagerForRetrieverRun
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
 
@@ -11,7 +12,8 @@ def fake_search_api(query):
 
 
 class SearchApiRetriever(BaseRetriever):
-    def _get_relevant_documents(self, query):
+
+    def _get_relevant_documents(self, query: str, *, run_manager: CallbackManagerForRetrieverRun):
         raw_results = fake_search_api(query)
         docs = []
         for item in raw_results:

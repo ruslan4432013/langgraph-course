@@ -4,6 +4,7 @@ from langchain_core.retrievers import BaseRetriever
 
 class SimpleInMemoryRetriever(BaseRetriever):
     def __init__(self, documents):
+        super().__init__()
         self._documents = documents
 
     def _get_relevant_documents(self, query):

@@ -29,6 +29,7 @@ class DummyChildVectorStore:
 
 class ParentDocumentRetriever(BaseRetriever):
     def __init__(self, store, child_vectorstore):
+        super().__init__()
         self._store = store
         self._child_vectorstore = child_vectorstore
 

@@ -16,6 +16,7 @@ class DummyVectorStore:
 
 class VectorStoreRetriever(BaseRetriever):
     def __init__(self, vectorstore):
+        super().__init__()
         self._vectorstore = vectorstore
 
     def _get_relevant_documents(self, query):

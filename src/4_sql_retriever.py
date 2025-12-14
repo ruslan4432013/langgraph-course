@@ -1,3 +1,4 @@
+from langchain_core.callbacks import CallbackManagerForRetrieverRun
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
 
@@ -16,7 +17,8 @@ def fake_sql_execute(sql):
 
 
 class SQLRetriever(BaseRetriever):
-    def _get_relevant_documents(self, query):
+
+    def _get_relevant_documents(self, query: str, *, run_manager: CallbackManagerForRetrieverRun) -> list[Document]:
         sql = fake_nl_to_sql(query)
         rows = fake_sql_execute(sql)
         docs = []

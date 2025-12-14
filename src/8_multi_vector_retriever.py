@@ -33,6 +33,7 @@ class MultiVectorIndex:
 
 class MultiVectorRetriever(BaseRetriever):
     def __init__(self, index):
+        super().__init__()
         self._index = index
 
     def _get_relevant_documents(self, query):

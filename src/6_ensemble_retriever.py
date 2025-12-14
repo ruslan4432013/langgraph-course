@@ -1,3 +1,4 @@
+from langchain_core.callbacks import CallbackManagerForRetrieverRun
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
 
@@ -22,10 +23,11 @@ class DummyRetrieverB(BaseRetriever):
 
 class SimpleEnsembleRetriever(BaseRetriever):
     def __init__(self, retrievers, weights):
+        super().__init__()
         self._retrievers = retrievers
         self._weights = weights
 
-    def _get_relevant_documents(self, query):
+    def _get_relevant_documents(self, query: str, *, run_manager: CallbackManagerForRetrieverRun):
         score_map = {}
         for retriever, weight in zip(self._retrievers, self._weights):
             docs = retriever._get_relevant_documents(query)
