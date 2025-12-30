@@ -1,7 +1,7 @@
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-env_path = '.env'
+env_path = '/Users/ruslanivanov/Desktop/projects/langgraph-course/.env'
 
 
 class Settings(BaseSettings):

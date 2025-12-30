@@ -3,7 +3,7 @@ from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
 
 
-def fake_search_api(query):
+def fake_search_api(query: str):
     # Имитируем внешний поисковый API, который возвращает «сырые» результаты
     return [
         {"title": "Ретриверы в LangChain", "url": "https://example.com/retrievers"},

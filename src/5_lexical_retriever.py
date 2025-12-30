@@ -33,7 +33,7 @@ if __name__ == "__main__":
     ]
 
     retriever = SimpleLexicalRetriever(docs)
-    query = "лексический поиск BM25"
+    query = "TF-IDF"
     result_docs = retriever.invoke(query)
 
     for doc in result_docs:

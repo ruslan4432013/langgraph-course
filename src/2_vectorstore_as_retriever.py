@@ -2,18 +2,6 @@ from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
 
 
-class DummyVectorStore:
-    def __init__(self, documents):
-        self._documents = documents
-
-    def similarity_search(self, query, k=2):
-        # Заглушка: просто вернуть первые k документов
-        return self._documents[:k]
-
-    def as_retriever(self):
-        return VectorStoreRetriever(self)
-
-
 class VectorStoreRetriever(BaseRetriever):
     def __init__(self, vectorstore):
         super().__init__()
@@ -21,6 +9,18 @@ class VectorStoreRetriever(BaseRetriever):
 
     def _get_relevant_documents(self, query):
         return self._vectorstore.similarity_search(query, k=2)
+
+
+class DummyVectorStore:
+    def __init__(self, documents: list[Document]):
+        self._documents = documents
+
+    def similarity_search(self, query: str, k=2):
+        # Заглушка: просто вернуть первые k документов
+        return self._documents[:k]
+
+    def as_retriever(self):
+        return VectorStoreRetriever(self)
 
 
 if __name__ == "__main__":

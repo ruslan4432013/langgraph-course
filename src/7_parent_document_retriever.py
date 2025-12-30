@@ -34,11 +34,15 @@ class ParentDocumentRetriever(BaseRetriever):
         self._child_vectorstore = child_vectorstore
 
     def _get_relevant_documents(self, query):
+        # 1. Ищем релевантные ФРАГМЕНТЫ (дочерние документы)
         child_ids = self._child_vectorstore.similarity_search_child_ids(query, k=2)
         parents = []
         seen = set()
         for child_id in child_ids:
+            # 2. Для каждого фрагмента находим РОДИТЕЛЯ
             parent_doc = self._store.get_parent_by_child(child_id)
+
+            # 3. Добавляем родителя, если ещё не добавили (избегаем дубликатов)
             if id(parent_doc) not in seen:
                 parents.append(parent_doc)
                 seen.add(id(parent_doc))

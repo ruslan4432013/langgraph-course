@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     ensemble_retriever = SimpleEnsembleRetriever(
         retrievers=[retriever_a, retriever_b],
-        weights=[0.5, 0.5],
+        weights=[0.5, 0.9],
     )
 
     query = "любой запрос"

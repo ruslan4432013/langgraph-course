@@ -7,7 +7,7 @@ class SimpleInMemoryRetriever(BaseRetriever):
         super().__init__()
         self._documents = documents
 
-    def _get_relevant_documents(self, query):
+    def _get_relevant_documents(self, query: str):
         # Простейший фильтр: вернуть все документы, где запрос входит в текст
         result = []
         for doc in self._documents:
