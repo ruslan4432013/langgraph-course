@@ -5,8 +5,8 @@ from langchain_core.messages import SystemMessage
 from langgraph.graph import MessagesState
 from pydantic import BaseModel, Field
 
-from lessons.module_4.assistant.analysts_workflow import Analyst
-from lessons.module_4.assistant.model import llm
+from src.assistant_intro.analysts_workflow import Analyst
+from src.assistant_intro.llm import llm
 
 
 class InterviewState(MessagesState):

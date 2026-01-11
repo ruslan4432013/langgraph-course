@@ -31,11 +31,13 @@ jiter==0.12.0
 jsonpatch==1.33
 jsonpointer==3.0.0
 jsonschema_rs==0.29.1
+langchain==1.2.3
 langchain-classic==1.0.1
 langchain-community==0.4.1
 langchain-core==1.2.7
 langchain-experimental==0.4.1
 langchain-openai==1.1.7
+langchain-tavily==0.2.16
 langchain-text-splitters==1.1.0
 langgraph==1.0.5
 langgraph-api==0.6.31
@@ -95,6 +97,7 @@ urllib3==2.6.3
 uuid_utils==0.13.0
 uvicorn==0.40.0
 watchfiles==1.1.1
+wikipedia==1.4.0
 xxhash==3.6.0
 yarl==1.22.0
 zipp==3.23.0

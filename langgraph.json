@@ -3,7 +3,8 @@
     "./requirements.txt"
   ],
   "graphs": {
-    "my_agent": "./main.py:make_graph"
+    "analysts_workflow": "./src/assistant_intro/analysts_workflow.py:app",
+    "interview_graph": "./src/assistant_intro/answer_generation.py:interview_graph"
   },
   "env": "./.env"
 }

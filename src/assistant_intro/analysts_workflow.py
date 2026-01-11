@@ -7,7 +7,7 @@ from langgraph.graph import START, END, StateGraph
 from pydantic import BaseModel, Field
 from typing_extensions import TypedDict
 
-from lessons.module_4.assistant.model import llm
+from src.assistant_intro.llm import llm
 
 
 class Analyst(BaseModel):
@@ -97,7 +97,7 @@ builder.add_conditional_edges("human_feedback", should_continue, ["create_analys
 
 # Компиляция
 memory = MemorySaver()
-app = builder.compile(interrupt_before=['human_feedback'], checkpointer=memory)
+app = builder.compile(interrupt_before=['human_feedback'])
 graph = builder.compile(interrupt_before=['human_feedback'])
 
 if __name__ == "__main__":
