@@ -1,15 +1,10 @@
 from pprint import pprint
-from typing import Annotated
 
 from langchain_core.messages import AIMessage, HumanMessage
-import os
-from langchain_deepseek import ChatDeepSeek
+from langchain_openai import ChatOpenAI
 from langgraph.constants import START, END
-from langgraph.graph import add_messages, StateGraph
-from langgraph.prebuilt import ToolNode
-from typing_extensions import TypedDict
-from langchain_core.messages import AnyMessage
 from langgraph.graph import MessagesState
+from langgraph.graph import StateGraph
 
 messages = [
     AIMessage(content="Вы говорили, что исследуете морских млекопитающих?", name="Модель"),
@@ -18,16 +13,13 @@ messages = [
     HumanMessage(content="Хочу узнать лучшее место для наблюдения за косатками в США.", name="Лэнс")
 ]
 
-# Установка API-ключа
-if "DEEPSEEK_API_KEY" not in os.environ:
-    os.environ["DEEPSEEK_API_KEY"] = input("DEEPSEEK_API_KEY: ")
-#
-llm = ChatDeepSeek(
+llm = ChatOpenAI(
     model='deepseek-chat',
     temperature=0.1,
     max_retries=2,
     api_base="https://api.proxyapi.ru/deepseek"  # Необходимо, для работы модели через ProxyApi
 )
+
 
 ############### Проверка 1. ###############
 # response = llm.invoke(messages)
@@ -39,7 +31,9 @@ def multiply(a: int, b: int) -> int:
     """Перемножает два числа."""
     return a * b
 
+
 llm_with_tools = llm.bind_tools([multiply])
+
 
 ############### Проверка 2. ###############
 # response = llm.invoke(messages)
@@ -60,6 +54,7 @@ class CustomState(MessagesState):
     # Здесь можно добавить дополнительные ключи для состояния графа
     pass
 
+
 ############### Проверка 3. ###############
 # # Изначальное состояние
 # initial_messages = [AIMessage(content="Hello! How can I assist you?", name="Модель"),
@@ -77,6 +72,7 @@ class CustomState(MessagesState):
 def tool_node(state: CustomState):
     response = llm_with_tools.invoke(state["messages"])
     return {"messages": [response]}
+
 
 # Сборка графа
 builder = StateGraph(CustomState)
@@ -101,4 +97,3 @@ if __name__ == '__main__':
             print(f"Вызов инструмента: {msg.tool_calls[0]['name']} с аргументами {msg.tool_calls[0]['args']}")
 
     pprint(result['messages'])
-
