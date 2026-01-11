@@ -1,12 +1,17 @@
 import pprint
 import sqlite3
+from pathlib import Path
+from typing import Literal
 
 from langchain_openai import ChatOpenAI
 
-# В памяти
-conn = sqlite3.connect(":memory:", check_same_thread = False)
+from src.settings import settings
 
-db_path = "state_db/example.db"
+# Настройка базы данных
+BASE_DIR = Path(__file__).resolve().parent
+db_path = BASE_DIR / "state_db" / "example.db"
+db_path.parent.mkdir(parents=True, exist_ok=True)
+
 conn = sqlite3.connect(db_path, check_same_thread=False)
 
 # Вот наш чекпоинтер
@@ -14,16 +19,16 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 
 memory = SqliteSaver(conn)
 
-from langchain_deepseek import ChatDeepSeek
 from langchain_core.messages import SystemMessage, HumanMessage, RemoveMessage
 from langgraph.graph import END
 from langgraph.graph import MessagesState
 
 model = ChatOpenAI(
-    model='gpt-4o-mini',
+    model="gpt-5.2",
+    api_key=settings.OPENAI_API_KEY,
     temperature=0.1,
     max_retries=2,
-    base_url="https://api.proxyapi.ru/openai/v1"  # Необходимо, для работы модели через ProxyApi
+    base_url="https://api.proxyapi.ru/openai/v1"
 )
 
 
@@ -74,7 +79,7 @@ def summarize_conversation(state: State):
 
 
 # Определяем, завершить или суммировать разговор
-def should_continue(state: State):
+def should_continue(state: State) -> Literal['summarize_conversation', END]:
     """Возвращает следующий узел для выполнения."""
     messages = state["messages"]
 
@@ -100,22 +105,23 @@ workflow.add_edge("summarize_conversation", END)
 
 # Компилируем
 graph = workflow.compile(checkpointer=memory)
+graph_cli = workflow.compile()
 
-# Создаём тред
-config = {"configurable": {"thread_id": "1"}}
+if __name__ == '__main__':
+    # Создаём тред
+    config = {"configurable": {"thread_id": "1"}}
 
-# Начинаем разговор
-input_message = HumanMessage(content="Привет! Я Лэнс")
-print(graph.invoke({"messages": [input_message]}, config))
+    # Начинаем разговор
+    input_message = HumanMessage(content="Привет! Я Лэнс")
+    print(graph.invoke({"messages": [input_message]}, config))
 
-input_message = HumanMessage(content="Как меня зовут?")
-print(graph.invoke({"messages": [input_message]}, config))
+    input_message = HumanMessage(content="Как меня зовут?")
+    print(graph.invoke({"messages": [input_message]}, config))
 
-input_message = HumanMessage(content="Мне нравятся 49ers!")
-print(graph.invoke({"messages": [input_message]}, config))
+    input_message = HumanMessage(content="Мне нравятся 49ers!")
+    print(graph.invoke({"messages": [input_message]}, config))
 
-
-# # Создать конфигурацию потока
-# config = {"configurable": {"thread_id": "1"}}
-# graph_state = graph.get_state(config)
-# print(graph_state)
+    # Создать конфигурацию потока
+    config = {"configurable": {"thread_id": "1"}}
+    graph_state = graph.get_state(config)
+    print(graph_state)
