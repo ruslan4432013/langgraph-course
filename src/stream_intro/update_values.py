@@ -1,6 +1,6 @@
 from langchain_core.messages import HumanMessage
 
-from agent import graph
+from src.stream_intro.agent import graph
 
 # Начинаем диалог снова
 config = {"configurable": {"thread_id": "2"}}
@@ -13,4 +13,4 @@ for event in graph.stream({"messages": [input_message]}, config, stream_mode="va
     print("=" * 25 + "Event" + "=" * 25)
     for m in event['messages']:
         m.pretty_print()
-    print("---"*25)
+    print("---" * 25)

@@ -2,8 +2,8 @@ from operator import add
 from typing import Annotated, TypedDict
 
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.constants import START, END
-from langgraph.graph import StateGraph, MessagesState
+from langgraph.constants import START
+from langgraph.graph import StateGraph
 
 
 class State(TypedDict):
@@ -36,7 +36,6 @@ config = {"configurable": {"thread_id": "2"}}
 #     print("=" * 25 + f" Event {num} " + "=" * 25)
 #     print(event)
 #     print("=" * 59 + '\n')
-
 
 
 for num, event in enumerate(graph.stream({"messages": []}, config, stream_mode="updates")):

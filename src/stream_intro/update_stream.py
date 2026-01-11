@@ -1,6 +1,7 @@
 from langchain_core.messages import HumanMessage
 
-from agent import graph
+from src.stream_intro.agent import graph
+
 # Создаем конфигурацию потока
 config = {"configurable": {"thread_id": "1"}}
 
