@@ -1,13 +1,9 @@
 {
-    "dependencies": [
-        "./requirements.txt"
-    ],
-    "graphs": {
-        "my_agent": "./main.py:make_graph",
-        "simple_graph": "./lessons/1_simple_graph/simple_graph.py:graph",
-        "chain": "./lessons/2_chain/chain.py:graph",
-        "router": "./lessons/3_router/router.py:graph",
-        "agent": "./lessons/4_agent/agent.py:react_graph"
-    },
-    "env": "./.env"
+  "dependencies": [
+    "./requirements.txt"
+  ],
+  "graphs": {
+    "memory_agent": "./src/main.py:react_graph_cli"
+  },
+  "env": "./.env"
 }

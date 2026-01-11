@@ -1,9 +1,12 @@
-from langchain_deepseek import ChatDeepSeek
-from langgraph.graph import MessagesState
 from langchain_core.messages import HumanMessage, SystemMessage
-from langgraph.prebuilt import ToolNode
+from langchain_openai import ChatOpenAI
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import MessagesState
 from langgraph.graph import START, StateGraph
+from langgraph.prebuilt import ToolNode
 from langgraph.prebuilt import tools_condition
+
+from src.settings import settings
 
 
 # Арифметические инструменты
@@ -40,11 +43,12 @@ def divide(a: int, b: int) -> float:
 tools = [add, multiply, divide]
 
 # Инициализация модели
-llm = ChatDeepSeek(
-    model='deepseek-chat',
+llm = ChatOpenAI(
+    model="gpt-5.2",
+    api_key=settings.OPENAI_API_KEY,
     temperature=0.1,
     max_retries=2,
-    api_base="https://api.proxyapi.ru/deepseek"  # Необходимо, для работы модели через ProxyApi
+    base_url="https://api.proxyapi.ru/openai/v1"
 )
 
 llm_with_tools = llm.bind_tools(tools)
@@ -74,11 +78,20 @@ builder.add_conditional_edges(
 )
 builder.add_edge("tools", "assistant")  # Ключевое ребро цикла
 
-react_graph = builder.compile()
+memory = MemorySaver()
+react_graph = builder.compile(checkpointer=memory)
+react_graph_cli = builder.compile()
 
 if __name__ == '__main__':
-    messages = [HumanMessage(content="Сложи 5 и 5. Умножь результат на 5. Раздели результат на 5")]
-    result = react_graph.invoke({"messages": messages})
+    config = {"configurable": {"thread_id": "1"}}
 
+    messages_1 = [HumanMessage(content="Сложи 3 и 4")]
+    result = react_graph.invoke({"messages": messages_1}, config=config)
     for m in result['messages']:
+        m.pretty_print()
+
+    messages_2 = [HumanMessage(content="Умножь это на 2.")]
+    messages = react_graph.invoke({"messages": messages_2}, config=config)
+
+    for m in messages['messages']:
         m.pretty_print()
