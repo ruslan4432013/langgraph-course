@@ -6,6 +6,8 @@ from langgraph.constants import START, END
 from langgraph.graph import MessagesState
 from langgraph.graph import StateGraph
 
+from src.settings import settings
+
 messages = [
     AIMessage(content="Вы говорили, что исследуете морских млекопитающих?", name="Модель"),
     HumanMessage(content="Да, верно.", name="Лэнс"),
@@ -14,10 +16,11 @@ messages = [
 ]
 
 llm = ChatOpenAI(
-    model='deepseek-chat',
+    model="gpt-5.2",
+    api_key=settings.OPENAI_API_KEY,
     temperature=0.1,
     max_retries=2,
-    api_base="https://api.proxyapi.ru/deepseek"  # Необходимо, для работы модели через ProxyApi
+    base_url="https://api.proxyapi.ru/openai/v1"
 )
 
 
