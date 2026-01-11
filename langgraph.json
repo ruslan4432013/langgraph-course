@@ -3,7 +3,7 @@
     "./requirements.txt"
   ],
   "graphs": {
-    "my_agent": "./main.py:make_graph"
+    "joke_generator": "./src/best_joke_graph.py:app"
   },
   "env": "./.env"
 }

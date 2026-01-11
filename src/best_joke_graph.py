@@ -1,7 +1,7 @@
 import operator
 from typing import Annotated
 
-from langchain_openai import ChatOpenAI  # Подсказки, которые мы будем использовать
+from langchain_openai import ChatOpenAI
 from langgraph.types import Send
 from pydantic import BaseModel
 from typing_extensions import TypedDict
@@ -13,13 +13,13 @@ subjects_prompt = """Сгенерируй список из 3 подтем, ко
 joke_prompt = """Сгенерируй шутку про {subject}"""
 
 best_joke_prompt = """Ниже находится множество шуток про {topic}. Выберите лучшую! Верните ID лучшей шутки, начиная с 0 как ID для первой шутки. Шутки: \n\n  {jokes}"""
-# Языковая модель (LLM)
+
 model = ChatOpenAI(
-    model='gpt-4o-mini',
+    model="gpt-5.2",
+    api_key=settings.OPENAI_API_KEY,
     temperature=0.1,
     max_retries=2,
-    base_url="https://api.proxyapi.ru/openai/v1",  # Необходимо, для работы модели через ProxyApi
-    api_key=settings.API_KEY,
+    base_url="https://api.proxyapi.ru/openai/v1"
 )
 
 
@@ -91,5 +91,6 @@ graph.add_edge("best_joke", END)
 app = graph.compile()
 
 # Вызываем граф: здесь мы вызываем его, чтобы сгенерировать список шуток
-# for s in app.stream({"topic": "Животные"}):
-#     print(s)
+if __name__ == '__main__':
+    for s in app.stream({"topic": "Животные"}):
+        print(s)
