@@ -1,8 +1,11 @@
 import asyncio
+import os
 
 from langchain_community.document_loaders import PDFPlumberLoader
 
-loader = PDFPlumberLoader("./voina-i-mir.pdf", extract_images=False)
+file_path = os.path.join(os.path.dirname(__file__), "voina-i-mir.pdf")
+
+loader = PDFPlumberLoader(file_path, extract_images=False)
 
 
 async def load_documents():
