@@ -1,5 +1,6 @@
-from react import graph
 from langchain_core.messages import HumanMessage
+
+from src.breakpoints_intro.react import graph
 
 # Входные данные
 initial_input = {"messages": HumanMessage(content="Умножь 2 на 3")}
