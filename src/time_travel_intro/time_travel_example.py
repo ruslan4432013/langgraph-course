@@ -1,7 +1,9 @@
 import pprint
 
 from langchain_core.messages import HumanMessage
-from agent import graph
+
+from src.time_travel_intro.agent import graph
+
 # Запустим его, как и раньше
 # Входные данные
 
@@ -39,7 +41,6 @@ print('[Откатываем граф]')
 for event in graph.stream(None, to_replay.config, stream_mode="values"):
     print(event['messages'][-1])
 
-
 print('[Сообщения в ветвлении]')
 to_fork = all_states[-2]
 print(to_fork.values["messages"])
@@ -49,13 +50,13 @@ print(to_fork.config)
 
 print('[Обновляем конфигурацию ветвления]')
 fork_config = graph.update_state(
-  to_fork.config,
-  {"messages": [HumanMessage(content='Умножь 5 на 3', id=to_fork.values["messages"][0].id)]},
+    to_fork.config,
+    {"messages": [HumanMessage(content='Умножь 5 на 3', id=to_fork.values["messages"][0].id)]},
 )
 print(fork_config)
 
 print('[Перезапрашиваем историю]')
-all_states = [state for state in graph.get_state_history(thread) ]
+all_states = [state for state in graph.get_state_history(thread)]
 print('[Получаем наши сообщения в том же графе]')
 print(all_states[0].values["messages"])
 print('[Получаем новое состояние]')
@@ -63,7 +64,7 @@ print(graph.get_state({'configurable': {'thread_id': '1'}}))
 
 print('[Запускаем граф с новой веткой]')
 for event in graph.stream(None, fork_config, stream_mode="values"):
-  print(event['messages'][-1])
+    print(event['messages'][-1])
 
 print('[Обновленное состояние нашего графа после выполнения]')
 print(graph.get_state({'configurable': {'thread_id': '1'}}))

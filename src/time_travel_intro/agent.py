@@ -1,5 +1,5 @@
 # Давайте создадим нашего агента
-from langchain_deepseek import ChatDeepSeek
+from langchain_openai import ChatOpenAI
 
 from src.settings import settings
 
@@ -33,12 +33,12 @@ def divide(a: int, b: int) -> float:
 
 
 tools = [add, multiply, divide]
-llm = ChatDeepSeek(
-    model='deepseek/deepseek-chat-v3.1',
+llm = ChatOpenAI(
+    model="gpt-5.2",
+    api_key=settings.OPENAI_API_KEY,
     temperature=0.1,
     max_retries=2,
-    api_base="https://api.proxyapi.ru/openrouter/v1",  # Необходимо, для работы модели через ProxyApi
-    api_key=settings.API_KEY,
+    base_url="https://api.proxyapi.ru/openai/v1"
 )
 
 llm_with_tools = llm.bind_tools(tools)
@@ -59,7 +59,7 @@ def assistant(state: MessagesState):
     return {"messages": [llm_with_tools.invoke([sys_msg] + state["messages"])]}
 
 
-# Построитель графа
+# Построитель графа.
 builder = StateGraph(MessagesState)
 
 # Определяем узлы: они выполняют работу
