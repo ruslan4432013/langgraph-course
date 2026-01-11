@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     LANGSMITH_PROJECT: str
 
     OPENAI_API_KEY: SecretStr
+    TAVILY_API_KEY: str
 
     model_config = SettingsConfigDict(env_file=env_path, env_file_encoding="utf-8")
 

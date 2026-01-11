@@ -3,7 +3,7 @@
     "./requirements.txt"
   ],
   "graphs": {
-    "my_agent": "./main.py:make_graph"
+    "my_agent": "./src/parallelization_intro/assistant_example.py:graph"
   },
   "env": "./.env"
 }
