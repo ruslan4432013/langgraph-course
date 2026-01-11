@@ -1,16 +1,16 @@
 from langchain.agents import create_agent
 from langchain_core.tools import tool
-from langchain_deepseek import ChatDeepSeek
+from langchain_openai import ChatOpenAI
 from langgraph.graph.state import CompiledStateGraph
 
 from src.settings import settings
 
-llm = ChatDeepSeek(
-    model='deepseek/deepseek-chat-v3.1',
+llm = ChatOpenAI(
+    model="gpt-5.2",
+    api_key=settings.OPENAI_API_KEY,
     temperature=0.1,
     max_retries=2,
-    api_base="https://api.proxyapi.ru/openrouter/v1",  # Необходимо, для работы модели через ProxyApi
-    api_key=settings.API_KEY,
+    base_url="https://api.proxyapi.ru/openai/v1"
 )
 
 
