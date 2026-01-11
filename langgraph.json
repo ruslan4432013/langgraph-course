@@ -1,12 +1,9 @@
 {
-    "dependencies": [
-        "./requirements.txt"
-    ],
-    "graphs": {
-        "my_agent": "./main.py:make_graph",
-        "simple_graph": "./lessons/1_simple_graph/simple_graph.py:graph",
-        "chain": "./lessons/2_chain/chain.py:graph",
-        "router": "./lessons/3_router/router.py:graph"
-    },
-    "env": "./.env"
+  "dependencies": [
+    "./requirements.txt"
+  ],
+  "graphs": {
+    "router": "./src/main.py:graph"
+  },
+  "env": "./.env"
 }
