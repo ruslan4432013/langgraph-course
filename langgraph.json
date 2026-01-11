@@ -1,15 +1,9 @@
 {
-    "dependencies": [
-        "./requirements.txt"
-    ],
-    "graphs": {
-        "my_agent": "./main.py:make_graph",
-        "simple_graph": "./lessons/module_1/1_simple_graph/simple_graph.py:graph",
-        "chain": "./lessons/module_1/2_chain/chain.py:graph",
-        "router": "./lessons/module_1/3_router/router.py:graph",
-        "agent": "./lessons/module_1/4_agent/agent.py:react_graph",
-        "parallel": "./lessons/module_2/1_state_graph/state_graph.py:graph",
-        "lesson-2.3": "./lessons/module_2/3_multi_scheme/multi_scheme.py:graph"
-    },
-    "env": "./.env"
+  "dependencies": [
+    "./requirements.txt"
+  ],
+  "graphs": {
+    "my_agent": "./src/main.py:graph"
+  },
+  "env": "./.env"
 }

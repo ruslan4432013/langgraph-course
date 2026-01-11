@@ -2,18 +2,20 @@
 from pprint import pprint
 
 from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.messages import trim_messages
 from langchain_openai import ChatOpenAI
 from langgraph.graph import MessagesState, StateGraph, START, END
-from langchain_core.messages import RemoveMessage, trim_messages
+
+from src.settings import settings
 
 # Инициализация модели
 llm = ChatOpenAI(
-    model='gpt-4o-mini',
+    model="gpt-5.2",
+    api_key=settings.OPENAI_API_KEY,
     temperature=0.1,
     max_retries=2,
-    base_url="https://api.proxyapi.ru/openai/v1"  # Необходимо, для работы модели через ProxyApi
+    base_url="https://api.proxyapi.ru/openai/v1"
 )
-
 
 #
 # # # Определение сообщений
@@ -65,6 +67,8 @@ messages = [AIMessage("Hi.", name="Bot", id="1")]
 messages.append(HumanMessage("Hi.", name="Lance", id="2"))
 messages.append(AIMessage("So you said you were researching ocean mammals?", name="Bot", id="3"))
 messages.append(HumanMessage("Yes, I know about whales. But what others should I learn about?", name="Lance", id="4"))
+
+
 # #
 # output = graph.invoke({'messages': messages})
 # for m in output['messages']:
@@ -102,12 +106,7 @@ def chat_model_node(state: MessagesState):
         state["messages"] + state["messages"] + state["messages"],
         max_tokens=50,
         strategy="last",
-        token_counter=ChatOpenAI(
-            model='gpt-4o-mini',
-            temperature=0.1,
-            max_retries=2,
-            base_url="https://api.proxyapi.ru/openai/v1"  # Необходимо, для работы модели через ProxyApi
-        ),
+        token_counter=llm,
         allow_partial=False,
     )
     print('INITIAL MESSAGES')
@@ -127,7 +126,6 @@ graph = builder.compile()
 
 # # Пример обрезки
 messages.append(HumanMessage("Tell me where Orcas live!", name="Lance"))
-
 
 # Вызов графа с обрезкой
 messages_out_trim = graph.invoke({'messages': messages})
