@@ -1,6 +1,6 @@
 from langchain_core.messages import HumanMessage
 
-from react import graph
+from src.editting_state_intro.agent_with_human_feedback import graph
 
 # Входные данные
 initial_input = {"messages": "Умножь 2 и 3"}

@@ -1,10 +1,12 @@
 # Системное сообщение
 from langchain_core.messages import SystemMessage
-from langchain_deepseek import ChatDeepSeek
+from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.constants import START
 from langgraph.graph import MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
+
+from src.settings import settings
 
 
 def multiply(a: int, b: int) -> int:
@@ -40,24 +42,28 @@ def divide(a: int, b: int) -> float:
 
 tools = [add, multiply, divide]
 
-llm = ChatDeepSeek(
-    model='deepseek-chat',
+llm = ChatOpenAI(
+    model="gpt-5.2",
+    api_key=settings.OPENAI_API_KEY,
     temperature=0.1,
     max_retries=2,
-    api_base="https://api.proxyapi.ru/deepseek"
+    base_url="https://api.proxyapi.ru/openai/v1"
 )
-
 llm_with_tools = llm.bind_tools(tools)
 
-sys_msg = SystemMessage(content="Вы полезный ассистент, которому поручено выполнять арифметические операции над набором входных данных.")
+sys_msg = SystemMessage(
+    content="Вы полезный ассистент, которому поручено выполнять арифметические операции над набором входных данных.")
+
 
 # no-op узел, который должен быть прерван
 def human_feedback(state: MessagesState):
     pass
 
+
 # Узел ассистента
 def assistant(state: MessagesState):
     return {"messages": [llm_with_tools.invoke([sys_msg] + state["messages"])]}
+
 
 # Построение графа
 builder = StateGraph(MessagesState)

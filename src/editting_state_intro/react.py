@@ -1,9 +1,11 @@
 from langchain_core.messages import SystemMessage
-from langchain_deepseek import ChatDeepSeek
+from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import MessagesState
 from langgraph.graph import START, StateGraph
 from langgraph.prebuilt import tools_condition, ToolNode
+
+from src.settings import settings
 
 
 def multiply(a: int, b: int) -> int:
@@ -39,11 +41,12 @@ def divide(a: int, b: int) -> float:
 
 tools = [add, multiply, divide]
 
-llm = ChatDeepSeek(
-    model='deepseek-chat',
+llm = ChatOpenAI(
+    model="gpt-5.2",
+    api_key=settings.OPENAI_API_KEY,
     temperature=0.1,
     max_retries=2,
-    api_base="https://api.proxyapi.ru/deepseek"
+    base_url="https://api.proxyapi.ru/openai/v1"
 )
 
 llm_with_tools = llm.bind_tools(tools)
@@ -75,4 +78,5 @@ builder.add_conditional_edges(
 builder.add_edge("tools", "assistant")
 
 memory = MemorySaver()
-graph = builder.compile(interrupt_before=["tools"], checkpointer=memory)
+graph = builder.compile(interrupt_before=["assistant"], checkpointer=memory)
+graph_cli = builder.compile()

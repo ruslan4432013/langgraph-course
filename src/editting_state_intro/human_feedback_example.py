@@ -1,4 +1,4 @@
-from agent_with_human_feedback import graph
+from src.editting_state_intro.agent_with_human_feedback import graph
 
 # Входные данные
 initial_input = {"messages": "Умножьте 2 и 3"}
