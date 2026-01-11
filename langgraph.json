@@ -3,7 +3,7 @@
     "./requirements.txt"
   ],
   "graphs": {
-    "my_agent": "./main.py:make_graph"
+    "agent": "./src/agent.py:react_graph"
   },
   "env": "./.env"
 }
