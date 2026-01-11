@@ -4,7 +4,7 @@ from typing import List, TypedDict
 from langgraph.constants import START, END
 from langgraph.graph import StateGraph
 
-from src.lessons.module_4.subgraph.log_state import Log
+from src.subgraph_intro.log_state import Log
 
 
 class QuestionSummarizationState(TypedDict):

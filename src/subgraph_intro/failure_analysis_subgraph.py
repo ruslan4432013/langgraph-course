@@ -2,7 +2,7 @@ from typing import TypedDict, List
 
 from langgraph.graph import StateGraph, START, END
 
-from src.lessons.module_4.subgraph.log_state import Log
+from src.subgraph_intro.log_state import Log
 
 
 # Подграф анализа ошибок

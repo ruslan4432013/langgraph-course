@@ -5,9 +5,9 @@ from typing import TypedDict, List, Annotated
 from langgraph.constants import START, END
 from langgraph.graph import StateGraph
 
-from src.lessons.module_4.subgraph.failure_analysis_subgraph import fa_builder
-from src.lessons.module_4.subgraph.log_state import Log
-from src.lessons.module_4.subgraph.question_summarization_subgraph import qs_builder
+from src.subgraph_intro.failure_analysis_subgraph import fa_builder
+from src.subgraph_intro.log_state import Log
+from src.subgraph_intro.question_summarization_subgraph import qs_builder
 
 
 class EntryGraphState(TypedDict):
