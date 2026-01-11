@@ -3,11 +3,14 @@ from typing import Literal
 
 from langchain_openai import ChatOpenAI
 
+from src.settings import settings
+
 model = ChatOpenAI(
-    model='gpt-4o-mini',
+    model="gpt-5.2",
+    api_key=settings.OPENAI_API_KEY,
     temperature=0.1,
     max_retries=2,
-    base_url="https://api.proxyapi.ru/openai/v1"  # Необходимо, для работы модели через ProxyApi
+    base_url="https://api.proxyapi.ru/openai/v1"
 )
 
 # # Использование MessagesState и расширение его пользовательским полем `summary`
@@ -17,8 +20,11 @@ from langgraph.graph import MessagesState
 class State(MessagesState):
     summary: str
 
+
 #
 from langchain_core.messages import SystemMessage, HumanMessage, RemoveMessage
+
+
 #
 #
 # # Определяем логику вызова модели
@@ -37,6 +43,7 @@ def call_model(state: State):
 
     response = model.invoke(messages)
     return {"messages": response}
+
 
 #
 def summarize_conversation(state: State):
@@ -60,9 +67,13 @@ def summarize_conversation(state: State):
     # Удаляем все сообщения, кроме двух последних
     delete_messages = [RemoveMessage(id=m.id) for m in state["messages"][:-2]]
     return {"summary": response.content, "messages": delete_messages}
+
+
 #
 #
 from langgraph.graph import END
+
+
 #
 #
 # # Определяем, нужно ли завершать или суммировать беседу
@@ -75,6 +86,8 @@ def should_continue(state: State) -> Literal['summarize_conversation', END]:
         return "summarize_conversation"
     # Иначе можно завершить
     return END
+
+
 #
 #
 from langgraph.checkpoint.memory import MemorySaver
