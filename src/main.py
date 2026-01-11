@@ -1,9 +1,11 @@
-from langchain_deepseek import ChatDeepSeek
-from langgraph.graph import MessagesState
 from langchain_core.messages import HumanMessage, SystemMessage
-from langgraph.prebuilt import ToolNode
+from langchain_openai import ChatOpenAI
+from langgraph.graph import MessagesState
 from langgraph.graph import START, StateGraph
+from langgraph.prebuilt import ToolNode
 from langgraph.prebuilt import tools_condition
+
+from src.settings import settings
 
 
 # Арифметические инструменты
@@ -40,11 +42,12 @@ def divide(a: int, b: int) -> float:
 tools = [add, multiply, divide]
 
 # Инициализация модели
-llm = ChatDeepSeek(
-    model='deepseek-chat',
+llm = ChatOpenAI(
+    model="gpt-5.2",
+    api_key=settings.OPENAI_API_KEY,
     temperature=0.1,
     max_retries=2,
-    api_base="https://api.proxyapi.ru/deepseek"  # Необходимо, для работы модели через ProxyApi
+    base_url="https://api.proxyapi.ru/openai/v1"
 )
 
 llm_with_tools = llm.bind_tools(tools)
