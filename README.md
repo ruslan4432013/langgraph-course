@@ -1,214 +1,124 @@
-Этот набор файлов демонстрирует все ключевые концепции из методички
-с практическими примерами для каждого раздела.
+Этот набор файлов демонстрирует ключевые концепции мультимодального ввода в LangChain, описанные в методичке
+`textbook.html`. Примеры включают работу с изображениями, аудио, видео и документами.
 
 СОДЕРЖАНИЕ ФАЙЛОВ
 =================
 
-01_invoke.py
+01_audio.py
 ------------
-Метод invoke - синхронный вызов одного входа
+Работа с аудио данными (AudioContentBlock).
 Включает:
-- Базовое использование invoke
-- Использование конфигурации (run_name, tags, metadata)
-- Примеры с простыми и сложными функциями
 
-Запуск: python 01_invoke.py
+- Передача аудио в base64.
+- Использование специализированных моделей (gpt-4o-audio-preview).
+- Настройка параметров для работы через ProxyAPI.
 
-
-02_batch.py
------------
-Метод batch - пакетная обработка нескольких входов
-Включает:
-- Параллельная обработка списков входов
-- Контроль параллелизма через max_concurrency
-- Обработка ошибок с return_exceptions
-
-Запуск: python 02_batch.py
+Запуск: python src/multimodal/01_audio.py
 
 
-03_stream.py
+02_images.py
 ------------
-Методы stream и astream - потоковая передача данных
+Работа с изображениями (ImageContentBlock).
 Включает:
-- Базовая потоковая передача
-- RunnableGenerator для истинной потоковой передачи
-- Асинхронные операции (astream)
-- Интеграция потоковой передачи в конвейеры
 
-Запуск: python 03_stream.py
+- Загрузка изображения по URL.
+- Передача изображения в формате base64 (с указанием mime_type).
+- Использование File ID провайдера.
+- Работа с моделью gpt-5.2.
+
+Запуск: python src/multimodal/02_images.py
 
 
-04_runnable_config.py
----------------------
-RunnableConfig - конфигурация выполнения
+03_video.py
+------------
+Работа с видео контентом (VideoContentBlock).
 Включает:
-- Основные параметры конфигурации (run_name, run_id, tags, metadata)
-- Использование max_concurrency для контроля параллелизма
-- Настраиваемые параметры через configurable
-- Передача одной конфигурации для batch
 
-Запуск: python 04_runnable_config.py
+- Передача видео в base64.
+- Примеры для моделей с поддержкой видео (Gemini 3).
+- Работа с типами контента "video" и "media".
+
+Запуск: python src/multimodal/03_video.py
 
 
-05_composition.py
------------------
-Композиция Runnable - построение цепочек
+04_files.py
+------------
+Работа с документами PDF и текстовыми файлами.
 Включает:
-- RunnableSequence (последовательная композиция с |)
-- RunnableParallel (параллельная композиция со словарями)
-- Метод pipe() для явной композиции
-- Смешанные композиции (последовательность + параллель)
-- Batch для составных цепочек
 
-Запуск: python 05_composition.py
+- Передача PDF через URL и base64.
+- Особенности работы с OpenAI (обязательный параметр filename для PDF).
+- Работа с PlainTextContentBlock (тип text-plain для .txt, .md).
+
+Запуск: python src/multimodal/04_files.py
 
 
-06_custom_runnable.py
----------------------
-Пользовательские Runnable (RunnableLambda, RunnableGenerator)
+05_practical_examples.py
+------------------------
+Готовые практические сценарии и комбинированные запросы.
 Включает:
-- RunnableLambda для обертывания функций
-- RunnableGenerator для генераторов и потоковой передачи
-- Преобразование типов в runnable
-- Композиция пользовательских runnable
-- Использование конфигурации с пользовательскими runnable
 
-Запуск: python 06_custom_runnable.py
+- Подробный анализ изображений.
+- Транскрипция и описание аудио записей.
+- Анализ юридических PDF-документов.
+- Комбинированные запросы (Текст + Изображение).
+- Сравнение нескольких изображений в одном запросе.
 
-
-07_advanced_methods.py
-----------------------
-Дополнительные методы Runnable
-Включает:
-- with_retry() - повторные попытки при ошибках
-- with_fallbacks() - использование альтернативных runnable
-- bind() - привязка аргументов к runnable
-- with_types() - привязка типов к runnable
-- Комбинирование методов
-
-Запуск: python 07_advanced_methods.py
-
-
-08_complete_example.py
-----------------------
-Полный практический пример - валидация и регистрация пользователя
-Включает:
-- Простые последовательности
-- Параллельная обработка
-- Обработка ошибок в batch
-- Использование конфигурации
-- RunnableGenerator для отчетов
-- Интеграция всех концепций
-
-Запуск: python 08_complete_example.py
+Запуск: python src/multimodal/05_practical_examples.py
 
 
 ИНСТРУКЦИЯ ПО ЗАПУСКУ
 ====================
 
 Предварительные требования:
+
 - Python 3.9+
-- LangChain Core (установка):
-  pip install langchain-core
+- Настроенный файл `.env` с API ключами (см. `src/settings.py`)
+- Установленные зависимости:
+  ```bash
+  pip install -r requirements.txt
+  ```
 
-Запуск всех примеров:
-  python 01_invoke.py
-  python 02_batch.py
-  python 03_stream.py
-  python 04_runnable_config.py
-  python 05_composition.py
-  python 06_custom_runnable.py
-  python 07_advanced_methods.py
-  python 08_complete_example.py
+Запуск примеров:
+Все примеры запускаются из корня проекта:
 
-Или одной командой (если на Unix/Linux/macOS):
-  for file in 0*.py; do python "$file" && echo ""; done
-
+```bash
+python src/multimodal/01_audio.py
+python src/multimodal/02_images.py
+python src/multimodal/03_video.py
+python src/multimodal/04_files.py
+python src/multimodal/05_practical_examples.py
+```
 
 СООТВЕТСТВИЕ С МЕТОДИЧКОЙ
 =========================
 
-Раздел методички → Файлы примеров:
+Раздел методички (textbook.html) → Файлы примеров:
 
-1. Основные концепции Runnable → 01_invoke.py, 02_batch.py
+1. Введение → (теория в методичке)
+2. Основы работы с сообщениями → Используется во всех файлах (HumanMessage)
+3. Контентные блоки → Используется во всех файлах (content=[...])
+4. Работа с изображениями → 02_images.py, 05_practical_examples.py
+5. Работа с аудио → 01_audio.py, 05_practical_examples.py
+6. Работа с видео → 03_video.py
+7. Работа с файлами (PDF и другие) → 04_files.py, 05_practical_examples.py
+8. Форматы LangChain и OpenAI → (теория в методичке)
+9. Практические примеры → 05_practical_examples.py
+10. Совместимость с провайдерами → См. комментарии в коде и методичку
 
-2. Методы выполнения:
-   - invoke → 01_invoke.py
-   - batch → 02_batch.py, 04_runnable_config.py
-   - stream/astream → 03_stream.py
-   - astream_events → комбинируется в 08_complete_example.py
+КЛЮЧЕВЫЕ КОНЦЕПЦИИ
+==================
 
-3. Типы входа и выхода → 06_custom_runnable.py, 07_advanced_methods.py
+- **Универсальность**: LangChain предоставляет единый формат блоков (image, audio, video, file) для разных провайдеров.
+- **Base64**: При передаче данных в base64 обязательно указывайте правильный `mime_type`.
+- **OpenAI PDF**: Для корректной работы GPT-4o/5.2 с PDF-файлами через блоки контента необходимо передавать параметр
+  `filename`.
+- **Модели**: Для аудио используйте `gpt-4o-audio-preview`, для видео — модели семейства Gemini.
 
-4. RunnableConfig → 04_runnable_config.py
+СОВЕТЫ ПО ИЗУЧЕНИЮ
+==================
 
-5. Композиция Runnable → 05_composition.py, 08_complete_example.py
-
-6. Пользовательские Runnable → 06_custom_runnable.py
-
-7. Дополнительные методы → 07_advanced_methods.py
-
-8. Отладка и наблюдаемость → 04_runnable_config.py
-
-9. Рекомендации по использованию → 08_complete_example.py
-
-
-КЛЮЧЕВЫЕ КОНЦЕПЦИИ ПО ФАЙЛАМ
-=============================
-
-01_invoke.py:
-- RunnableLambda(function) - оборачивание функции
-- runnable.invoke(input) - вызов одного входа
-- Использование config для трассировки
-
-02_batch.py:
-- runnable.batch(inputs) - параллельная обработка
-- return_exceptions=True - обработка ошибок
-- Измерение производительности
-
-03_stream.py:
-- runnable.stream(input) - синхронная потоковая передача
-- RunnableGenerator(generator_function) - генератор
-- Интеграция в конвейеры
-
-04_runnable_config.py:
-- config={'run_name': '...', 'tags': [...], ...}
-- max_concurrency для ограничения параллелизма
-- run_id для отслеживания запусков
-
-05_composition.py:
-- runnable_1 | runnable_2 - последовательная композиция
-- runnable | {'key': runnable_2} - параллельная композиция
-- runnable.pipe(other1, other2) - явная композиция
-
-06_custom_runnable.py:
-- RunnableLambda для функций
-- RunnableGenerator для генераторов
-- Композиция пользовательских runnable
-
-07_advanced_methods.py:
-- .with_retry(stop_after_attempt=...) - повторные попытки
-- .with_fallbacks([...]) - альтернативные runnable
-- .bind(param=value) - привязка аргументов
-- .with_types(input_type=..., output_type=...)
-
-08_complete_example.py:
-- Все методы вместе в реальном сценарии
-- Email валидация и регистрация пользователя
-- Параллельная обработка
-- Обработка ошибок
-
-
-СОВЕТЫ ДЛЯ ИЗУЧЕНИЯ
-===================
-
-1. Начните с 01_invoke.py для понимания базики
-2. Изучите 02_batch.py для параллельной обработки
-3. Переходите к 05_composition.py для построения цепочек
-4. Используйте 06_custom_runnable.py как справочник для своих функций
-5. Применяйте методы из 07_advanced_methods.py для надежности
-6. Изучите 08_complete_example.py для полного примера
-
-Каждый файл можно запустить независимо и содержит полную демонстрацию
-своего раздела методички.
-"""
+1. Прочитайте методичку `textbook.html` для понимания теоретических основ.
+2. Изучите файлы `01-04` для работы с конкретными типами мультимодальных данных.
+3. Используйте `05_practical_examples.py` как образец для создания сложных комбинированных запросов.
+4. Для проверки поддержки мультимодальности конкретными провайдерами используйте ссылки из раздела 10 методички.
