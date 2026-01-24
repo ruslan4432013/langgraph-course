@@ -17,7 +17,7 @@ def fetch_url(url: str) -> str:
     return response.text
 
 
-system_prompt = """\
+system_prompt = """
 Используй fetch_url, когда нужно получить информацию с веб-страницы; цитируй соответствующие фрагменты.
 """
 
