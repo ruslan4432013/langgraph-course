@@ -1,7 +1,7 @@
 from typing import Literal
 
 import bs4
-from langchain import hub
+from langchain_classic import hub
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -43,13 +43,13 @@ _ = vector_store.add_documents(all_splits)
 
 # Определяем схему для поиска
 class Search(TypedDict):
-    """Поисковый запрос."""
+    """Search query only in english."""
 
-    query: Annotated[str, ..., "Поисковый запрос для выполнения."]
+    query: Annotated[str, ..., "Search query to run. Use english language"]
     section: Annotated[
         Literal["beginning", "middle", "end"],
         ...,
-        "Секция для запроса.",
+        "Query section to run the search in.",
     ]
 
 

@@ -1,5 +1,5 @@
 import bs4
-from langchain import hub
+from langchain_classic import hub
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
