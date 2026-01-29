@@ -1,3 +1,5 @@
+from langchain_core.messages import AIMessage
+
 from src.applications.web_rag_app.app_parts.app_states import State, Search
 from src.applications.web_rag_app.app_parts.get_rag_prompt import prompt
 from src.components.llm_model import llm
@@ -22,5 +24,5 @@ def retrieve(state: State):
 def generate(state: State):
     docs_content = "\n\n".join(doc.page_content for doc in state["context"])
     messages = prompt.invoke({"question": state["question"], "context": docs_content})
-    response = llm.invoke(messages)
+    response: AIMessage = llm.invoke(messages)
     return {"answer": response.content}

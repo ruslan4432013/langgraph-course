@@ -1,4 +1,4 @@
-from langchain import hub
+from langchain_classic import hub
 from langchain_core.messages import BaseMessage
 from langchain_core.prompt_values import ChatPromptValue
 

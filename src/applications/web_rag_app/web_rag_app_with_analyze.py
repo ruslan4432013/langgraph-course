@@ -91,6 +91,7 @@ def generate(state: State):
     return {"answer": response.content}
 
 
-graph_builder = StateGraph(State, input_schema=InputState).add_sequence([analyze_query, retrieve, generate])
+graph_builder: StateGraph = StateGraph(State, input_schema=InputState).add_sequence([analyze_query, retrieve, generate])
 graph_builder.add_edge(START, "analyze_query")
+graph_builder.add_conditional_edges()
 graph = graph_builder.compile()
