@@ -3,7 +3,8 @@
     "./requirements.txt"
   ],
   "graphs": {
-    "web_rag_app": "./src/web_rag_application/web_rag_application.py:graph"
+    "web_rag_app": "./src/web_rag_application/web_rag_application.py:graph",
+    "agentic_rag": "./src/web_rag_application/web_rag_application_agent.py:agent_executor"
   },
   "env": "./.env"
 }

@@ -12,6 +12,7 @@ def query_or_respond(state: MessagesState):
     llm_with_tools = llm.bind_tools([retrieve])
     response = llm_with_tools.invoke(state["messages"])
     # MessagesState добавляет сообщения к состоянию вместо перезаписи
+
     return {"messages": [response]}
 
 
