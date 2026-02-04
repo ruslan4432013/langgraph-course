@@ -9,7 +9,7 @@ vectorstore = InMemoryVectorStore.from_documents(
     documents=doc_splits,
     embedding=OpenAIEmbeddings(api_key=settings.OPENAI_API_KEY, base_url='https://api.proxyapi.ru/openai/v1')
 )
-retriever = vectorstore.as_retriever()
+retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
 
 
 @tool
