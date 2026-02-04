@@ -34,7 +34,7 @@ grader_model = init_chat_model(
 def grade_documents(
         state: MessagesState,
 ) -> Literal["generate_answer", "rewrite_question"]:
-    """Determine whether the retrieved documents are relevant to the question."""
+    """Определить, релевантны ли извлеченные документы вопросу."""
     question = state["messages"][0].content
     context = state["messages"][-1].content
 

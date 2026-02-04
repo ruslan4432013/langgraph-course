@@ -9,7 +9,7 @@ from src.components.rewrite_question import rewrite_question
 
 workflow = StateGraph(MessagesState)
 
-# Define the nodes we will cycle between
+# Определяем узлы, между которыми будем перемещаться
 workflow.add_node(generate_query_or_respond)
 workflow.add_node("retrieve", ToolNode([retriever_tool]))
 workflow.add_node(rewrite_question)
@@ -17,28 +17,28 @@ workflow.add_node(generate_answer)
 
 workflow.add_edge(START, "generate_query_or_respond")
 
-# Decide whether to retrieve
+# Решаем, нужно ли извлекать данные
 workflow.add_conditional_edges(
     "generate_query_or_respond",
-    # Assess LLM decision (call `retriever_tool` tool or respond to the user)
+    # Оцениваем решение LLM (вызвать инструмент `retriever_tool` или ответить пользователю)
     tools_condition,
     {
-        # Translate the condition outputs to nodes in our graph
+        # Переводим выходные данные условия в узлы нашего графа
         "tools": "retrieve",
         END: END,
     },
 )
 
-# Edges taken after the `action` node is called.
+# Ребра, используемые после вызова узла `action`.
 workflow.add_conditional_edges(
     "retrieve",
-    # Assess agent decision
+    # Оцениваем решение агента
     grade_documents,
 )
 workflow.add_edge("generate_answer", END)
 workflow.add_edge("rewrite_question", "generate_query_or_respond")
 
-# Compile
+# Компиляция
 graph = workflow.compile()
 
 if __name__ == "__main__":

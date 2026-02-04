@@ -15,7 +15,7 @@ REWRITE_PROMPT = (
 
 
 def rewrite_question(state: MessagesState):
-    """Rewrite the original user question."""
+    """Переформулировать исходный вопрос пользователя."""
     messages = state["messages"]
     question = messages[0].content
     prompt = REWRITE_PROMPT.format(question=question)
