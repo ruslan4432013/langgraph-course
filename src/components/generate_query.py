@@ -19,7 +19,7 @@ SYSTEM_PROMPT = (
 
 
 def generate_query_or_respond(state: MessagesState):
-    """Вызвать модель для генерации ответа на основе текущего состояния. 
+    """Вызвать модель для генерации ответа на основе текущего состояния.
     В зависимости от вопроса, модель примет решение: извлечь информацию с помощью инструмента поиска или просто ответить пользователю.
     """
     messages = [SystemMessage(content=SYSTEM_PROMPT)] + state["messages"]
@@ -31,7 +31,8 @@ def generate_query_or_respond(state: MessagesState):
 
 
 if __name__ == "__main__":
-    input_value = {"messages": [{"role": "user", "content": "hello!"}]}
+    input_value = {
+        "messages": [{"role": "user", "content": "Что Лилиан Венг говорит о вознаграждениях по типам взлома?"}]}
     messages = generate_query_or_respond(input_value)["messages"]
     last_message = messages[-1]
     last_message.pretty_print()

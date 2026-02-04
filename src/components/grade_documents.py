@@ -50,8 +50,8 @@ def grade_documents(
 
     if score == "yes":
         return "generate_answer"
-    else:
-        return "rewrite_question"
+
+    return "rewrite_question"
 
 
 if __name__ == "__main__":
