@@ -3,7 +3,15 @@
     "./requirements.txt"
   ],
   "graphs": {
-    "my_agent": "./src/graph.py:graph"
+    "simple_graph": "./src/examples/as_node/01_simple_graph.py:graph",
+    "shared_state_schema": "./src/examples/as_node/02_shared_state_schema.py:graph",
+    "first_subgraph": "./src/examples/from_node/01_first_subugraph.py:graph",
+    "subgraphs": "./src/examples/from_node/02_subgraphs.py:graph",
+    "different_state_schema": "./src/examples/from_node/03_different_state_schema.py:graph",
+    "two_levels_subgraph": "./src/examples/from_node/04_two_levels_subgraph.py:parent_graph",
+    "persistence": "./src/examples/persistance.py:graph",
+    "subgraph_state": "./src/examples/subgraph_state.py:graph",
+    "subgraph_stream": "./src/examples/subgraph_stream.py:graph"
   },
   "env": "./.env"
 }
