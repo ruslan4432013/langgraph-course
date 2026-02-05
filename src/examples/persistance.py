@@ -25,8 +25,9 @@ builder.add_node("node_1", subgraph)
 builder.add_edge(START, "node_1")
 
 checkpointer = MemorySaver()
-graph = builder.compile(checkpointer=checkpointer)
+graph_checkpointer = builder.compile(checkpointer=checkpointer)
+graph = builder.compile()
 
 if __name__ == "__main__":
-    result = graph.invoke({"foo": "foo"}, config={'thread_id': 1})
+    result = graph_checkpointer.invoke({"foo": "foo"}, config={'thread_id': 1})
     print(result)
