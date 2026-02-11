@@ -1,9 +1,13 @@
 from dataclasses import dataclass
+from dotenv import load_dotenv
 from langchain.agents import create_agent
 from langchain.chat_models import init_chat_model
 from langchain.tools import tool, ToolRuntime
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain.agents.structured_output import ToolStrategy
+
+# ✅ Загружаем ключ из .env файла
+load_dotenv()
 
 # Определение системного промпта
 SYSTEM_PROMPT = """Вы эксперт по прогнозированию погоды, говорящий каламбурами.
@@ -38,7 +42,7 @@ def get_user_location(runtime: ToolRuntime[Context]) -> str:
 
 # Конфигурация модели
 model = init_chat_model(
-    "claude-sonnet-4-5-20250929",
+    model="openai:gpt-4o",
     temperature=0
 )
 
@@ -76,10 +80,6 @@ response = agent.invoke(
 )
 
 print(response['structured_response'])
-# ResponseFormat(
-#     punny_response="Florida is still having a 'sun-derful' day! The sunshine is playing 'ray-dio' hits all day long! I'd say it's the perfect weather for some 'solar-bration'! If you were hoping for rain, I'm afraid that idea is all 'washed up' - the forecast remains 'clear-ly' brilliant!",
-#     weather_conditions="It's always sunny in Florida!"
-# )
 
 # Можно продолжить разговор, используя тот же `thread_id`.
 response = agent.invoke(
@@ -89,7 +89,3 @@ response = agent.invoke(
 )
 
 print(response['structured_response'])
-# ResponseFormat(
-#     punny_response="You're 'thund-erfully' welcome! It's always a 'breeze' to help you stay 'current' with the weather. I'm just 'cloud'-ing around waiting to 'shower' you with more forecasts whenever you need them. Have a 'sun-sational' day in the Florida sunshine!",
-#     weather_conditions=None
-# )
