@@ -1,7 +1,7 @@
 from src.server import mcp
 from src.service.to_do_list import to_do_list
 
-# Примеры старых текстовых ресурсов (закомментированы)
+# Примеры неструктурированного вывода
 # @mcp.resource("to-do://lists", mime_type="text/plain")
 # def show_lists() -> str:
 #     """
@@ -13,8 +13,8 @@ from src.service.to_do_list import to_do_list
 #     tasks = to_do_list.get_lists()
 #     return "; ".join(tasks)
 #
-# @mcp.resource("to-do://lists/{name}", mime_type="text/plain")
-# def show_list(name: str) -> str:
+# @mcp.resource("to-do://tasks", mime_type="application/json")
+# def show_tasks() -> str:
 #     """
 #         Получает все задачи из указанного списка дел.
 #
@@ -24,8 +24,9 @@ from src.service.to_do_list import to_do_list
 #         Возвращает:
 #             str: Все задачи списка через точку с запятой.
 #     """
-#     tasks = to_do_list.find_list(name)
-#     return "; ".join(tasks)
+#     tasks = to_do_list.get_tasks()
+#     result = "; ".join(f"{k}: {v}" for k, v in tasks.items())
+#     return result
 
 
 # Структурированный вывод
