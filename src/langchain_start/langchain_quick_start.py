@@ -1,13 +1,12 @@
 from dataclasses import dataclass
-from dotenv import load_dotenv
+
 from langchain.agents import create_agent
+from langchain.agents.structured_output import ToolStrategy
 from langchain.chat_models import init_chat_model
 from langchain.tools import tool, ToolRuntime
 from langgraph.checkpoint.memory import InMemorySaver
-from langchain.agents.structured_output import ToolStrategy
 
-# ✅ Загружаем ключ из .env файла
-load_dotenv()
+from src.settings import settings
 
 # Определение системного промпта
 SYSTEM_PROMPT = """Вы эксперт по прогнозированию погоды, говорящий каламбурами.
@@ -42,8 +41,9 @@ def get_user_location(runtime: ToolRuntime[Context]) -> str:
 
 # Конфигурация модели
 model = init_chat_model(
-    model="openai:gpt-4o",
-    temperature=0
+    model="gpt-4.1",
+    base_url="https://api.proxyapi.ru/openai/v1",
+    api_key=settings.OPENAI_API_KEY
 )
 
 
@@ -73,19 +73,20 @@ agent = create_agent(
 # Запуск агента
 # `thread_id` — уникальный идентификатор для разговора.
 config = {"configurable": {"thread_id": "1"}}
-response = agent.invoke(
-    {"messages": [{"role": "user", "content": "какая погода на улице?"}]},
-    config=config,
-    context=Context(user_id="1")
-)
+if __name__ == "__main__":
+    response = agent.invoke(
+        {"messages": [{"role": "user", "content": "какая погода на улице?"}]},
+        config=config,
+        context=Context(user_id="1")
+    )
 
-print(response['structured_response'])
+    print(response['structured_response'])
 
-# Можно продолжить разговор, используя тот же `thread_id`.
-response = agent.invoke(
-    {"messages": [{"role": "user", "content": "спасибо!"}]},
-    config=config,
-    context=Context(user_id="1")
-)
+    # Можно продолжить разговор, используя тот же `thread_id`.
+    response = agent.invoke(
+        {"messages": [{"role": "user", "content": "спасибо!"}]},
+        config=config,
+        context=Context(user_id="1")
+    )
 
-print(response['structured_response'])
+    print(response['structured_response'])
