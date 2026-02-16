@@ -1,14 +1,7 @@
-from pathlib import Path
-
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-current_file = Path(__file__).resolve()
-
-current_dir = current_file.parent
-
-env_path = current_dir.parent / ".env"
-
+env_path = ['.env', '../.env']
 
 class Settings(BaseSettings):
     LANGSMITH_TRACING: str
@@ -16,7 +9,9 @@ class Settings(BaseSettings):
     LANGSMITH_API_KEY: str
     LANGSMITH_PROJECT: str
 
-    OPENAI_API_KEY: SecretStr
+    OPENAI_API_KEY: str
+    OPENAI_BASE_URL: str
+    TAVILY_API_KEY: str
 
     model_config = SettingsConfigDict(env_file=env_path, env_file_encoding="utf-8")
 
