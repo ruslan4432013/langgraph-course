@@ -46,7 +46,7 @@ async def call_llm(state: State) -> State:
 
 @tool
 async def get_tasks(name_list: str) -> str:
-    """Просмотреть задачи всех списков через ресурс `to-do://lists/<name_list>'"""
+    """Просмотреть задачи всех списков через ресурс `to-do://tasks'"""
     blobs = await client.get_resources(server_name="to-do-list", uris=[f"to-do://tasks"])
     return [blob.as_string() for blob in blobs][0]
 
