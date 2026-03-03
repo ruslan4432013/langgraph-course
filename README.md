@@ -1,39 +1,89 @@
 # AI-приложение с клиентом MCP
-## Описание
-Клиент создан на стеке python3.11/langchain/langgraph в образовательных целях. Работает в паре
-с [сервером MCP](https://github.com/ruslan4432013/langgraph-course/tree/mcp/server).
 
-Агент на архитектуре ReAct способен обращаться к ресурсам, инструментам, промптам сервера по ведению списков дел.
+## Описание
+
+Образовательный проект — клиент **MCP** (Model Context Protocol) на стеке **Python 3.11 / LangChain / LangGraph**.
+
+Агент построен на архитектуре **ReAct** и умеет обращаться к ресурсам, инструментам и промптам
+MCP-сервера по ведению списков дел.  
+Работает в паре с [MCP-сервером](https://github.com/ruslan4432013/langgraph-course/tree/mcp/server).
 
 ## Структура проекта
-./scripts - скрипты для запуска проекта;
 
-./src/agent.py - агент с бизнес логикой;
+```
+├── scripts/
+│   ├── linux.sh            # Скрипт запуска для Linux / macOS
+│   └── windows.bat         # Скрипт запуска для Windows
+├── src/
+│   ├── agent.py            # ReAct-агент с бизнес-логикой
+│   ├── settings.py         # Загрузка конфигураций из .env (Pydantic Settings)
+│   ├── call_mcp_tool.py    # Вызов MCP-инструмента SearchDocsByLangChain (JSON-RPC / SSE)
+│   └── get_tools.py        # Получение списка инструментов с MCP-сервера
+├── .env.example            # Шаблон переменных окружения
+├── .env                    # Переменные окружения (не коммитится)
+├── langgraph.json          # Конфигурация LangGraph / LangSmith
+├── requirements.txt        # Зависимости Python
+└── README.md
+```
 
-./src/settings.py - загрузка конфигураций;
+## Требования
 
-./.env - файл с конфигурациями;
+1. **Python 3.11** (или совместимая версия).
+2. Заполненный файл **`.env`** (см. `.env.example`).
+3. Запущенный [MCP-сервер](https://github.com/ruslan4432013/langgraph-course/tree/mcp/server).
 
-./langgraph.json - конфигурации langsmith.
+## Переменные окружения
 
-## Требования перед запуском
+Скопируйте `.env.example` → `.env` и заполните значения:
 
-1. Заполненный .env;
-2. Python версии 3.11 в системе;
-3. Запущенный [сервер MCP](https://github.com/ruslan4432013/langgraph-course/tree/mcp/server).
+| Переменная           | Описание                                           |
+|----------------------|----------------------------------------------------|
+| `LANGSMITH_TRACING`  | Включение трассировки LangSmith (`true` / `false`) |
+| `LANGSMITH_ENDPOINT` | URL эндпоинта LangSmith                            |
+| `LANGSMITH_API_KEY`  | API-ключ LangSmith                                 |
+| `LANGSMITH_PROJECT`  | Название проекта в LangSmith                       |
+| `OPENAI_API_KEY`     | API-ключ OpenAI (или прокси)                       |
+| `OPENAI_BASE_URL`    | Базовый URL OpenAI API (необязательно)             |
+| `TAVILY_API_KEY`     | API-ключ Tavily для веб-поиска                     |
 
 ## Запуск
 
-Склонировать проект, перейти в корень и выполнить:
+Склонируйте репозиторий, перейдите в корневую директорию и выполните:
 
-```
+**Linux / macOS:**
+
+```bash
 ./scripts/linux.sh
-
-или
-
-scripts/windows.bat
 ```
 
-## Примеры запуска
+**Windows:**
 
-![](img/example.png)
+```bat
+scripts\windows.bat
+```
+
+Скрипт автоматически:
+
+1. Создаст `.env` из `.env.example` (если отсутствует).
+2. Создаст виртуальное окружение `.venv`.
+3. Установит зависимости из `requirements.txt`.
+4. Запустит dev-сервер LangGraph (`langgraph dev`).
+
+## Утилиты
+
+| Скрипт                 | Описание                                                                                                        |
+|------------------------|-----------------------------------------------------------------------------------------------------------------|
+| `src/call_mcp_tool.py` | Пример вызова MCP-инструмента `SearchDocsByLangChain` — отправляет JSON-RPC запрос и парсит ответ (JSON / SSE). |
+| `src/get_tools.py`     | Получает список доступных инструментов с MCP-сервера и сохраняет в `tools.json`.                                |
+
+Запуск утилит:
+
+```bash
+source .venv/bin/activate
+python src/call_mcp_tool.py
+python src/get_tools.py
+```
+
+## Примеры работы
+
+![Пример работы агента](img/example.png)
