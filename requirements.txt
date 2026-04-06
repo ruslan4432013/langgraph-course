@@ -1,0 +1,12 @@
+langchain>=1.2.10
+langchain-core>=1.2.13
+langchain-mcp-adapters>=0.2.1
+langchain-openai>=1.1.9
+langgraph>=1.0.8
+langgraph-cli[inmem]>=0.4.12
+langgraph-prebuilt>=1.0.7
+mcp>=1.26.0
+pydantic>=2.12.0
+pydantic-settings>=2.13.0
+python-dotenv>=1.2.0
+fastmcp[openai]>=2.0.0
