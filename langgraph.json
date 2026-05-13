@@ -1,9 +1,7 @@
 {
-  "dependencies": [
-    "./requirements.txt"
-  ],
+  "dependencies": ["."],
   "graphs": {
-    "my_agent": "./main.py:make_graph"
+    "agent": "./src/main.py:app"
   },
-  "env": "./.env"
+  "env": ".env"
 }
