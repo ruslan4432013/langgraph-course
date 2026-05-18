@@ -3,7 +3,7 @@
 # 1. Создание виртуального окружения, если его нет
 if [ ! -d ".venv" ]; then
     echo "Create virtual venv..."
-    python -m venv .venv
+    python3 -m venv .venv
 else
     echo "Virtual venv is exists"
 fi

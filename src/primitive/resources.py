@@ -1,6 +1,7 @@
 from src.server import mcp
 from src.service.to_do_list import to_do_list
 
+
 # Примеры неструктурированного вывода
 # @mcp.resource("to-do://lists", mime_type="text/plain")
 # def show_lists() -> str:
@@ -52,3 +53,17 @@ def show_tasks() -> dict[str, list[str]]:
             а значение — список задач в этом списке.
     """
     return to_do_list.get_tasks()
+
+
+@mcp.resource("to-do://tasks/{key}", mime_type="application/json")
+def show_tasks_by_key(key: str) -> dict[str, list[str]]:
+    """
+        Получает задачи одного списка дел по его ключу.
+
+        Аргументы:
+            key (str): Ключ списка дел (например, 'work', 'personal').
+
+        Возвращает:
+            dict[str, list[TaskEntry]]: Словарь с одним списком и его задачами.
+    """
+    return to_do_list.get_tasks(key)
