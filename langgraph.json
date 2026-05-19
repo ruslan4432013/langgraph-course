@@ -3,7 +3,7 @@
     "./requirements.txt"
   ],
   "graphs": {
-    "my_agent": "./src/agent.py:agent"
+    "my_agent": "./src/client/agent.py:agent"
   },
   "env": "./.env"
 }

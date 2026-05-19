@@ -1,18 +1,19 @@
 import asyncio
+
+from langchain_anthropic import ChatAnthropic
 from langchain_core.tools import tool
 from langchain_mcp_adapters.client import MultiServerMCPClient
-from langchain_openai import ChatOpenAI
 from langgraph.constants import START, END
 from langgraph.graph import MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
-from src.settings import settings
 
-llm = ChatOpenAI(
-    model="gpt-4o",
+from src.client.settings import settings
+
+llm = ChatAnthropic(
+    model_name="claude-sonnet-4-6",
     temperature=0.1,
-    max_retries=2,
-    api_key=settings.OPENAI_API_KEY,
-    base_url=settings.OPENAI_BASE_URL
+    api_key=settings.PROXY_API_KEY.get_secret_value(),
+    base_url="https://api.proxyapi.ru/anthropic"
 )
 
 client = MultiServerMCPClient(
@@ -24,8 +25,10 @@ client = MultiServerMCPClient(
     }
 )
 
+
 class State(MessagesState):
     pass
+
 
 async def call_llm(state: State) -> State:
     # Получение всех списков дел
@@ -43,6 +46,7 @@ async def call_llm(state: State) -> State:
     messages = prompt + state["messages"]
     response = await llm.ainvoke(messages)
     return {"messages": response}
+
 
 @tool
 async def get_tasks(name_list: str) -> str:
